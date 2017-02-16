@@ -26,7 +26,6 @@ addons:
   apt:
     sources:
        - ubuntu-toolchain-r-test
-       - sourceline: 'ppa:george-edison55/cmake-3.x'
     packages:
        - cmake
        - libnuma-dev
@@ -36,6 +35,7 @@ addons:
        - clang-3.4
        - libclang-3.4-dev
        - llvm-3.4
+       - wget
 
 before_script:
   - ulimit -c unlimited
@@ -43,9 +43,12 @@ before_script:
   # Disable the core dump tests as container based builds don't allow setting
   # core_pattern and don't have apport installed.  This can be removed when
   # apport is available in apt whitelist
+  - wget http://www.cmake.org/files/v3.6/cmake-3.6.3-Linux-x86_64.tar.gz
+  - tar -xf cmake-3.6.3-Linux-x86_64.tar.gz
+  - export PATH=$PWD/cmake-3.6.3-Linux-x86_64/bin:$PATH
+
 
 script:
-  - apt-cache policy cmake
   - mkdir -p build
   - cd build
   - cmake -Wdev ..
