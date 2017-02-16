@@ -26,8 +26,9 @@ addons:
   apt:
     sources:
        - ubuntu-toolchain-r-test
+       - kalakris-cmake
     packages:
-       - ninja
+       - cmake
        - libnuma-dev
        - bison
        - gcc-multilib
