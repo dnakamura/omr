@@ -45,6 +45,7 @@ before_script:
   # apport is available in apt whitelist
 
 script:
+  - apt-cache policy cmake
   - mkdir -p build
   - cd build
   - cmake -Wdev ..
