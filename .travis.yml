@@ -42,7 +42,7 @@ matrix:
   - os: linux
   - os: osx
   - os: linux
-    env: TOOLCHAIN="-DCMAKE_TOOLCHAIN_FILE=../scripts/arm.toolchain"  TOOLS_IMPORT="-DOMR_TOOLS_IMPORT_FILE=../native_build/tools/ImportTools.cmake" 
+    env: TOOLCHAIN="-DCMAKE_TOOLCHAIN_FILE=../scripts/arm.toolchain"  TOOLS_IMPORT="-DOMR_TOOLS_IMPORT_FILE=../native_build/tools/ImportTools.cmake"
     before_script:
       - mkdir native_build
       - cd native_build
@@ -63,6 +63,6 @@ before_script:
 script:
   - mkdir -p build
   - cd build
-  - cmake -Wdev  ..
+  - cmake -Wdev $TOOLCHAIN $TOOLS_IMPORT ..
   - cmake --build .
   - ctest -V
