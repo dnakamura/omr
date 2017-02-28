@@ -33,6 +33,7 @@ addons:
        - bison
        - gcc-multilib
        - g++-multilib
+       - g++-arm-linux-gnueabi
        - clang-3.4
        - libclang-3.4-dev
        - llvm-3.4
@@ -41,14 +42,10 @@ matrix:
   - os: linux
   - os: osx
   - os: linux
-    addons:
-      apt:
-        packages:
-          - g++-arm-linux-gnueabi
-
+    env: TOOLCHAIN="-DCMAKE_TOOLCHAIN_FILE=../scripts/arm.toolchain"  TOOLS_IMPORT="-DOMR_TOOLS_IMPORT_FILE=../native_build/tools/ToolsImport.cmake"
     before_script:
       - mkdir native_build
-      - cd nativ_build
+      - cd native_build
       - cmake -Wdev ..
       - cmake --build . --target tracegen
       - cmake --build . --target hookgen
