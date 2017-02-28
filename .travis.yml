@@ -47,8 +47,11 @@ matrix:
       - mkdir native_build
       - cd native_build
       - cmake -Wdev ..
+      - ls ./tools
       - cmake --build . --target tracegen
       - cmake --build . --target hookgen
+      - ls .
+      - ls ./tools
       - cd ..
     script:
       - mkdir -p build
