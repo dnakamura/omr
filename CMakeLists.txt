@@ -71,7 +71,7 @@ configure_file(./omrversionstrings.CMakeTemplate.h omrversionstrings.h)
 add_subdirectory(tools)
 # Yeah, its dumb doing this here. Read note in tools/CMakeLists.txt
 if(CMAKE_CROSSCOMPILING)
-	include(${OMR_TOOLS_IMPORTFILE})
+	include(${OMR_TOOLS_IMPORT_FILE})
 endif()
 add_subdirectory(thread)
 add_subdirectory(port)
