@@ -46,6 +46,8 @@ matrix:
         packages:
           - g++-arm-linux-gnueabi
     env: x=1
+    before_script:
+      - echo "HI"
 
 before_script:
   - ulimit -c unlimited
