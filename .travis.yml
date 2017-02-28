@@ -53,7 +53,7 @@ matrix:
     script:
       - mkdir -p build
       - cd build
-      - cmake -Wdev -DCMAKE_TOOLCHAIN_FILE=../scripts/arm.toolchain -DOMR_TOOLS_IMPORT_FILE=../native_build/tools/ImportTools.cmake
+      - cmake -Wdev -DCMAKE_TOOLCHAIN_FILE=../scripts/arm.toolchain -DOMR_TOOLS_IMPORT_FILE=../native_build/tools/ImportTools.cmake ..
       - cmake --build .
 
 before_script:
