@@ -45,9 +45,15 @@ matrix:
       apt:
         packages:
           - g++-arm-linux-gnueabi
-    env: x=1
+
     before_script:
-      - echo "HI"
+      - mkdir native_build
+      - cd nativ_build
+      - cmake -Wdev ..
+      - cmake --build . --target tracegen
+      - cmake --build . --target hookgen
+    script:
+      - pwd
 
 before_script:
   - ulimit -c unlimited
