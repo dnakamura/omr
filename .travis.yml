@@ -37,27 +37,30 @@ addons:
        - clang-3.4
        - libclang-3.4-dev
        - llvm-3.4
+       #TODO should only be on arm compiles
+       - qemu-user-static
 matrix:
   include:
   - os: linux
   - os: osx
   - os: linux
     env: ARCH=arm
-    before_script:
+    script:
       - mkdir native_build
       - cd native_build
       - cmake -Wdev ..
-      - ls ./tools
       - cmake --build . --target tracegen
       - cmake --build . --target hookgen
-      - ls .
-      - ls ./tools
       - cd ..
-    script:
       - mkdir -p build
       - cd build
-      - cmake -Wdev -DCMAKE_TOOLCHAIN_FILE=../scripts/arm.toolchain -DOMR_TOOLS_IMPORT_FILE=../native_build/tools/ImportTools.cmake ..
+      - cmake -Wdev -DCMAKE_TOOLCHAIN_FILE=../scripts/arm.toolchain -DOMR_TOOLS_IMPORT_FILE=native_build/tools/ImportTools.cmake ..
       - cmake --build .
+      - export QEMU_LD_PREFIX=/usr/arm-linux-gnueabi
+      - update-binfmts --display
+      - fvtest/porttest/omrporttest
+      - qemu-arm-static fvtest/porttest/omrporttest
+      - ctest -V
 
 before_script:
   - ulimit -c unlimited
