@@ -402,10 +402,10 @@ OMR::X86::Instruction::aboutToAssignRegister(TR::Register *reg, TR_UpperHalfRefC
    }
 
 uint8_t *
-OMR::X86::Instruction::generateRexPrefix(uint8_t *cursor)
+OMR::X86::Instruction::generateRepeatedRexPrefix(uint8_t *cursor)
    {
    uint8_t rex = self()->rexBits();
-   uint8_t numBytes = self()->rexPrefixLength();
+   uint8_t numBytes = self()->rexRepeatCount();
    if (numBytes)
       {
       // If we're forced to add rex prefixes we didn't otherwise need,
@@ -422,9 +422,9 @@ OMR::X86::Instruction::generateRexPrefix(uint8_t *cursor)
    }
 
 uint8_t
-OMR::X86::Instruction::rexPrefixLength()
+OMR::X86::Instruction::rexRepeatCount()
    {
-   return _rexRepeatCount + (self()->rexBits() ? 1 : 0);
+   return _rexRepeatCount;
    }
 
 /* -----------------------------------------------------------------------------
@@ -449,8 +449,11 @@ void TR_X86OpCode::trackUpperBitsOnReg(TR::Register *reg, TR::CodeGenerator *cg)
 
 // Whole-register opcodes
 //
+extern TR_X86OpCodes ADDMemImms()     { return ADDMemImms     ( TR::Compiler->target.is64Bit() ? true : false ); }
+extern TR_X86OpCodes ADDMemImm4()     { return ADDMemImm4     ( TR::Compiler->target.is64Bit() ? true : false ); }
 extern TR_X86OpCodes ADDRegImms()     { return ADDRegImms     ( TR::Compiler->target.is64Bit() ? true : false ); }
 extern TR_X86OpCodes ADDRegImm4()     { return ADDRegImm4     ( TR::Compiler->target.is64Bit() ? true : false ); }
+extern TR_X86OpCodes ADDMemReg()      { return ADDMemReg      ( TR::Compiler->target.is64Bit() ? true : false ); }
 extern TR_X86OpCodes ADDRegMem()      { return ADDRegMem      ( TR::Compiler->target.is64Bit() ? true : false ); }
 extern TR_X86OpCodes ADDRegReg()      { return ADDRegReg      ( TR::Compiler->target.is64Bit() ? true : false ); }
 extern TR_X86OpCodes ADCRegImms()     { return ADCRegImms     ( TR::Compiler->target.is64Bit() ? true : false ); }
@@ -487,6 +490,7 @@ extern TR_X86OpCodes SARRegImm1()     { return SARRegImm1     ( TR::Compiler->ta
 extern TR_X86OpCodes SHRRegImm1()     { return SHRRegImm1     ( TR::Compiler->target.is64Bit() ? true : false ); }
 extern TR_X86OpCodes SMemReg()        { return SMemReg        ( TR::Compiler->target.is64Bit() ? true : false ); }
 extern TR_X86OpCodes SMemImm4()       { return SMemImm4       ( TR::Compiler->target.is64Bit() ? true : false ); }
+extern TR_X86OpCodes SUBMemImms()     { return SUBMemImms     ( TR::Compiler->target.is64Bit() ? true : false ); }
 extern TR_X86OpCodes SUBRegImms()     { return SUBRegImms     ( TR::Compiler->target.is64Bit() ? true : false ); }
 extern TR_X86OpCodes SUBRegImm4()     { return SUBRegImm4     ( TR::Compiler->target.is64Bit() ? true : false ); }
 extern TR_X86OpCodes SUBRegReg()      { return SUBRegReg      ( TR::Compiler->target.is64Bit() ? true : false ); }

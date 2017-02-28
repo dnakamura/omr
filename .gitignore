@@ -16,6 +16,15 @@
 #    Multiple authors (IBM Corp.) - initial implementation and documentation
 ###############################################################################
 
+build/
+CMakeFiles/
+CMakeCache.txt
+omrcfg.h
+omrversionstrings.h
+CTestTestfile.cmake
+Makefile
+cmake_install.cmake
+
 # configure artifacts
 autom4te.cache
 config.cache
@@ -55,24 +64,24 @@ J9TraceFormat.dat
 OMRTestTraceFormat.dat
 OMRTraceFormat.dat
 
-omralgotest
-omrgcexample
-omrgctest
-omrperfgctest
-omrporttest
-omrrastest
-omrsigtest
-omrsubscribertest
-omrthreadextendedtest
-omrthreadtest
-omrtraceoptiontest
-omrutiltest
-omrvmtest
-testjit
-utTrcCounters
+/omralgotest
+/omrgcexample
+/omrgctest
+/omrperfgctest
+/omrporttest
+/omrrastest
+/omrsigtest
+/omrsubscribertest
+/omrthreadextendedtest
+/omrthreadtest
+/omrtraceoptiontest
+/omrutiltest
+/omrvmtest
+/testjit
+/utTrcCounters
 
 # hook generation tool
-hookgen
+/hookgen
 
 # trace
 /tracegen

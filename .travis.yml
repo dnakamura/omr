@@ -20,40 +20,54 @@ language: c++
 sudo: false
 
 # https://docs.travis-ci.com/user/caching/
-cache: ccache
-
+#cache: ccache
+dist: trusty
 addons:
+  artifacts:
+    debug: true
+    paths:
+      build/CMakeCache.txt
   apt:
-    sources:
-       - ubuntu-toolchain-r-test
     packages:
        - libnuma-dev
        - bison
        - gcc-multilib
        - g++-multilib
+       - g++-arm-linux-gnueabi
        - clang-3.4
        - libclang-3.4-dev
        - llvm-3.4
+matrix:
+  include:
+  - os: linux
+  - os: osx
+  - os: linux
+    env: ARCH=arm
+    before_script:
+      - mkdir native_build
+      - cd native_build
+      - cmake -Wdev ..
+      - cmake --build . --target tracegen
+      - cmake --build . --target hookgen
+      - cd ..
+    script:
+      - mkdir -p build
+      - cd build
+      - cmake -Wdev -DCMAKE_TOOLCHAIN_FILE=../scripts/arm.toolchain -DOMR_TOOLS_IMPORT_FILE=../native_build/tools/ImportTools.cmake ..
+      - cmake --build .
 
 before_script:
   - ulimit -c unlimited
+  - export GTEST_COLOR=1
   - export GTEST_FILTER=-*dump_test_create_dump_*:*NumaSetAffinity:*NumaSetAffinitySuspended
-# Disable the core dump tests as container based builds don't allow setting
-# core_pattern and don't have apport installed.  This can be removed when
-# apport is available in apt whitelist
-
-matrix:
-  include:
-    - os: linux
-      env: SPEC=linux_x86               PLATFORM=amd64-linux-gcc
-    - os: linux
-      env: SPEC=linux_x86-64            PLATFORM=amd64-linux64-gcc
-    - os: linux
-      env: SPEC=linux_x86-64_cmprssptrs PLATFORM=amd64-linux64-gcc
-    - os: osx
-      env: SPEC=osx_x86-64
+  # Disable the core dump tests as container based builds don't allow setting
+  # core_pattern and don't have apport installed.  This can be removed when
+  # apport is available in apt whitelist
+  # blah
 
 script:
-  - make -f run_configure.mk OMRGLUE=./example/glue
-  - make && make test && ([ "$SPEC" != "linux_x86-64" ] || make lint)
-
+  - mkdir -p build
+  - cd build
+  - cmake -Wdev ..
+  - cmake --build .
+  - ctest -V

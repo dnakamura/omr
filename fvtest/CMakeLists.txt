@@ -1,0 +1,13 @@
+add_subdirectory(util)
+
+add_subdirectory(omrGtestGlue)
+add_subdirectory(algotest)
+# add_subdirectory(compilertest)
+add_subdirectory(gctest)
+add_subdirectory(porttest)
+# add_subdirectory(rastest)
+add_subdirectory(sigtest)
+# add_subdirectory(threadextendedtest)
+add_subdirectory(threadtest)
+add_subdirectory(utiltest)
+# add_subdirectory(vmtest)

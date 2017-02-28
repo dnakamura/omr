@@ -162,7 +162,7 @@ TR_Debug * createDebugObject(TR::Compilation * comp)
 
 
 
-#if defined(AIXPPC) || defined(LINUX) || defined(J9ZOS390) || defined(WIN32)
+#if defined(AIXPPC) || defined(LINUX) || defined(J9ZOS390) || defined(WINDOWS)
 static void stopOnCreate()
    {
    static int first = 1;
@@ -207,7 +207,7 @@ TR_Debug::debugOnCreate()
 #elif defined(AIXPPC)
    setupDebugger((void *) *((long*)&(stopOnCreate)));
    stopOnCreate();
-#elif defined(LINUX) || defined(J9ZOS390) || (defined(WIN32))
+#elif defined(LINUX) || defined(J9ZOS390) || (defined(WINDOWS))
    setupDebugger((void *) &stopOnCreate,(void *) &stopOnCreate,true);
    stopOnCreate();
 #endif
@@ -1651,6 +1651,8 @@ TR_Debug::getName(TR::SymbolReference * symRef)
             return "<killsAllMethod>";
          case TR::SymbolReferenceTable::usesAllMethodSymbol:
             return "<usesAllMethod>";
+         case TR::SymbolReferenceTable::synchronizedFieldLoadSymbol:
+            return "<synchronizedFieldLoad>";
          case TR::SymbolReferenceTable::atomicAdd32BitSymbol:
              return "<atomicAdd32Bit>";
          case TR::SymbolReferenceTable::atomicAdd64BitSymbol:
@@ -2122,6 +2124,7 @@ static const char *commonNonhelperSymbolNames[] =
    "<j9methodExtraField>",
    "<startPCLinkageInfo>",
    "<instanceShapeFromROMClass>",
+   "<synchronizedFieldLoad>",
    "<atomicAdd32Bit>",
    "<atomicAdd64Bit>",
    "<atomicFetchAndAdd32Bit>",
@@ -5496,7 +5499,7 @@ void TR_Debug::setupDebugger(void *startaddr, void *endaddr, bool before)
          else printf("Could not open %s, skipping break !\n",cfname);
          }
    }
-#elif defined(WIN32)
+#elif defined(WINDOWS)
 #ifndef WINDOWS_API_INCLUDED
 extern "C"
    {
