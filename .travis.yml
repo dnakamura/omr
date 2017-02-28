@@ -58,6 +58,7 @@ before_script:
   # Disable the core dump tests as container based builds don't allow setting
   # core_pattern and don't have apport installed.  This can be removed when
   # apport is available in apt whitelist
+  # blah
 
 script:
   - mkdir -p build
