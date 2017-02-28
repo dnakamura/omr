@@ -20,7 +20,7 @@ language: c++
 sudo: false
 
 # https://docs.travis-ci.com/user/caching/
-cache: ccache
+#cache: ccache
 dist: trusty
 addons:
   artifacts:
