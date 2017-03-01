@@ -55,12 +55,9 @@ matrix:
       - cd ..
       - mkdir -p build
       - cd build
-      - cmake -Wdev -DCMAKE_TOOLCHAIN_FILE=../scripts/arm.toolchain -DOMR_TOOLS_IMPORT_FILE=native_build/tools/ImportTools.cmake ..
-      - cmake --build .
       - export QEMU_LD_PREFIX=/usr/arm-linux-gnueabi
-      - update-binfmts --display
-      - fvtest/porttest/omrporttest
-      - qemu-arm-static fvtest/porttest/omrporttest
+      - cmake -Wdev -DCMAKE_TOOLCHAIN_FILE=../scripts/arm.toolchain -DCROSSCOMPILING_EMULATOR=qemu-arm-static -DOMR_TOOLS_IMPORT_FILE=native_build/tools/ImportTools.cmake ..
+      - cmake --build .
       - ctest -V
 
 before_script:
