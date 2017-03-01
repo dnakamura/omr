@@ -27,6 +27,7 @@ addons:
     debug: true
     paths:
       build/CMakeCache.txt
+      build/CTestTestfile.cmake
   apt:
     packages:
        - libnuma-dev
