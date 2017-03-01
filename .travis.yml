@@ -56,7 +56,7 @@ matrix:
       - mkdir -p build
       - cd build
       - export QEMU_LD_PREFIX=/usr/arm-linux-gnueabi
-      - cmake -Wdev -DCMAKE_TOOLCHAIN_FILE=../scripts/arm.toolchain -DCROSSCOMPILING_EMULATOR=qemu-arm-static -DOMR_TOOLS_IMPORT_FILE=native_build/tools/ImportTools.cmake ..
+      - cmake -Wdev -DCMAKE_TOOLCHAIN_FILE=../scripts/arm.toolchain -DCMAKE_CROSSCOMPILING_EMULATOR=qemu-arm-static -DOMR_TOOLS_IMPORT_FILE=native_build/tools/ImportTools.cmake ..
       - cmake --build .
       - ctest -V
 
