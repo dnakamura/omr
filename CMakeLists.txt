@@ -54,6 +54,16 @@ function(VPathResolve inlist dirlist outlist)
   set(${outlist} ${output} PARENT_SCOPE)
 endfunction()
 
+#function to deal with older versions of cmake
+#which dont handle CMAKE_CROSSCOMPILING_EMULATOR
+#TODO this is fairly fragile (eg relies on having NAME and COMMAND keywords)
+macro(add_test_helper _name_kwd _test_name _cmd_kwd)
+	if(CMAKE_CROSSCOMPILING AND (CMAKE_VERSION VERSION_LESS 3.3))
+		add_test(NAME "${_test_name}"  COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} ${ARGN})
+	else()
+		add_test(NAME "${_test_name}" COMMAND ${ARGN})
+	endif()
+endmacro()
 include_directories(
   ${PROJECT_BINARY_DIR}
   ./include/

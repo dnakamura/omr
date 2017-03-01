@@ -52,4 +52,4 @@ target_link_libraries(omrsigtest
   #MODULE_SHARED_LIBS += ws2_32 shell32 Iphlpapi psapi pdh
 #endif
 
-add_test(NAME sigtest COMMAND omrsigtest)
+add_test_helper(NAME sigtest COMMAND omrsigtest)
