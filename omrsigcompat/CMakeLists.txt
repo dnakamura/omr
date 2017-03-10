@@ -65,6 +65,8 @@ endif()
 #endif
 #endif
 
+target_link_libraries(omrsig omrutil omr_shared)
+
 #MODULE_STATIC_LIBS += omrutil
 #ifneq (,$(findstring linux,$(OMR_HOST_OS)))
     #MODULE_SHARED_LIBS += pthread

@@ -7,6 +7,8 @@ set(OMR_VERSION ${OMR_VERSION_MAJOR}.${OMR_VERSION_MINOR}.${OMR_VERSION_PATCH})
 
 project(omr VERSION ${OMR_VERSION} LANGUAGES CXX C)
 
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH})
+
 ###
 ### Getting the glue directory
 ###

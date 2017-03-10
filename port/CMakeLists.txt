@@ -15,29 +15,29 @@ endif()
 
 
 if(OMR_HOST_OS STREQUAL "zos")
-	#TODO these need source file extensions
 	list(APPEND OBJECTS
-		j9generate_ieat_dump
-		omrget_large_pageable_pages_supported
-		j9wto
-		j9pgser_release
-		omrgetuserid
-		j9sysinfo_get_number_CPUs
-		j9jobname
-		j9userid
-		j9csrsi
-		j9csrsi_wrp
-		j9zfs
-		j9lpdat)
+		j9generate_ieat_dump.s
+		omrget_large_pageable_pages_supported.s
+		j9wto.s
+		j9pgser_release.s
+		omrgetuserid.c
+		j9sysinfo_get_number_CPUs.s
+		j9jobname.s
+		j9userid.s
+		j9csrsi.c
+		j9csrsi_wrp.s
+		j9zfs.c
+		j9lpdat.mc
+	)
 	#TODO more objects here. See port_objects.mk:55
 	if(OMR_ENV_DATA64)
 		list(APPEND OBJECTS
-			omrget_userExtendedPrivateAreaMemoryType.c
-			omrget_large_pages_supported.c
-			omrget_large_2gb_pages_supported.c
-			omrvmem_support_above_bar.c
-			omrvmem_support_below_bar_64.c
-			j9ipt_ttoken64.c
+			omrget_userExtendedPrivateAreaMemoryType.s
+			omrget_large_pages_supported.s
+			omrget_large_2gb_pages_supported.s
+			omrvmem_support_above_bar.s
+			omrvmem_support_below_bar_64.s
+			j9ipt_ttoken64.s
 		)
 	else()
 		list(APPEND OBJECTS omrvmem_support_below_bar_31.c)
@@ -52,7 +52,31 @@ list(APPEND OBJECTS
 	omrgetasid.c
 )
 
-#TODO omrtime stuff port_objects.mk:75
+if(OMR_ARCH_S390)
+	list(APPEND OBJECTS omrrttime.s)
+else()
+	if(OMR_ARCH_PPC)
+		if(OMR_ENV_DATA64)
+			if(OMR_HOST_OS STREQUAL "linux")
+				#TODO what source extension is this?
+				list(APPEND OBJECTS omrrttime)
+			endif()
+		endif()
+	endif()
+endif()
+
+if(OMR_ARCH_S390)
+	if(OMR_HOST_OS STREQUAL "linux")
+		list(APPEND OBJECTS omrgetstfle) #TODO: extension?
+	else()
+		if(OMR_ENV_DATA64)
+			list(APPEND OBJECTS omrgetstfle64.s)
+		else()
+			list(APPEND OBJECTS omrgetstfle31.s)
+		endif()
+	endif()
+endif()
+
 
 #TODO another if block @port_objects.mk:89
 
@@ -297,7 +321,9 @@ target_link_libraries(omrport
 
 #TODO hack to get to compile. Need platform checks
 if(NOT OMR_HOST_OS STREQUAL "win")
-	target_link_libraries(omrport dl)
+	if(NOT OMR_HOST_OS STREQUAL "zos")
+		target_link_libraries(omrport dl)
+	endif()
 endif()
 
 if(OMR_HOST_OS STREQUAL "osx")

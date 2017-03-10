@@ -50,4 +50,8 @@ target_link_libraries(omralgotest
 	j9hookstatic
 )
 
+if(OMR_HOST_OS STREQUAL "zos")
+	target_link_libraries(omralgotest j9a2e)
+endif()
+
 add_test(NAME algotest COMMAND omralgotest -avltest:${CMAKE_CURRENT_SOURCE_DIR}/avltest.lst)
