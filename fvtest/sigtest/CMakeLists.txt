@@ -15,6 +15,10 @@ if(OMR_HOST_OS STREQUAL "win")
 	)
 endif()
 
+if(OMR_HOST_OS STREQUAL "zos")
+	target_link_libraries(omrsigtest j9a2e)
+endif()
+
 #TODO pretty sure omrtestutil only used for headers
 target_link_libraries(omrsigtest
 	omrGtestGlue

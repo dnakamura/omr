@@ -67,8 +67,14 @@ if(OMR_HOST_OS STREQUAL "win")
 	)
 endif()
 
+if(OMR_HOST_OS STREQUAL "zos")
+	target_link_libraries(omrporttest j9a2e)
+endif()
+
+
 add_library(sltestlib SHARED
 	sltestlib/sltest.c)
+target_link_libraries(sltestlib PRIVATE omr_shared)
 
 #Shared lib test broken on windows
 if(OMR_HOST_OS STREQUAL "win")

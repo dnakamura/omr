@@ -71,6 +71,11 @@ elseif(OMR_HOST_OS STREQUAL "win")
         pdh
     )
 endif()
+
+if(OMR_HOST_OS STREQUAL "zos")
+	target_link_libraries(omrthreadtest j9a2e)
+endif()
+
 add_test(NAME threadtest COMMAND omrthreadtest)
 #TODO need to add other execution targets
 #	./omrthreadtest --gtest_also_run_disabled_tests --gtest_filter=ThreadCreateTest.DISABLED_SetAttrThreadWeight

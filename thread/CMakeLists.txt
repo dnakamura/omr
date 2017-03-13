@@ -39,12 +39,15 @@ endif()
 #MODULE_INCLUDES += $(THREAD_SRCDIR)
 include_directories(.)
 
-#ifeq (zos,$(OMR_HOST_OS))
-  #OBJECTS += thrcputime
-  #vpath % $(THREAD_SRCDIR)zos390
-  #vpath % $(THREAD_SRCDIR)unix
-  #MODULE_INCLUDES += $(THREAD_SRCDIR)zos390 $(THREAD_SRCDIR)unix
-#endif
+
+if(OMR_HOST_OS STREQUAL "zos")
+	list(APPEND VPATHS
+		zos390
+		unix
+	)
+	include_directories(zos390 unix)
+	list(APPEND OBJECTS thrcputime.s)
+endif()
 
 if(OMR_HOST_OS STREQUAL "linux")
 	list(APPEND VPATHS

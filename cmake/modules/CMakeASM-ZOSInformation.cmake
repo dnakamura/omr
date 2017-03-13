@@ -1,0 +1,9 @@
+set(CMAKE_ASM-ZOS_SOURCE_FILE_EXTENSIONS s)
+
+
+set(CMAKE_ASM-ZOS_COMPILE_OBJECT "<CMAKE_ASM-ZOS_COMPILER> <INCLUDES> <FLAGS> <DEFINES> -o <OBJECT> <SOURCE>")
+
+# Load the generic ASMInformation file:
+set(ASM_DIALECT "-ZOS")
+include(CMakeASMInformation)
+set(ASM_DIALECT)

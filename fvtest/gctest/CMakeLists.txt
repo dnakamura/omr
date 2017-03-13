@@ -38,3 +38,6 @@ target_link_libraries(omrgctest
   #MODULE_SHARED_LIBS += ws2_32 shell32 Iphlpapi psapi pdh
 #endif
 
+if(OMR_HOST_OS STREQUAL "zos")
+	target_link_libraries(omrgctest j9a2e)
+endif()

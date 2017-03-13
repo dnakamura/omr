@@ -38,3 +38,7 @@ target_include_directories(trace
 	INTERFACE
 		./
 )
+
+if(OMR_HOST_OS STREQUAL "zos")
+	target_link_libraries(trace j9a2e)
+endif()
