@@ -6,16 +6,20 @@ if test "x$BUILD_WITH_CMAKE" = "xyes"; then
   mkdir build
   cd build
   cmake -Wdev -C../cmake/caches/Travis.cmake ..
-  cmake --build .
-  if test "x$RUN_TESTS" != "xno"; then
-    ctest -V
+  if test "x$RUN_BUILD" != "xno"; then
+    cmake --build .
+    if test "x$RUN_TESTS" != "xno"; then
+      ctest -V
+    fi
   fi
 else
-  # Normal build system
   make -f run_configure.mk OMRGLUE=./example/glue SPEC="$SPEC" PLATFORM="$PLATFORM"
-  make -j4
-  if test "x$RUN_TESTS" != "xno"; then
-    make test
+  if test "x$RUN_BUILD" != "xno"; then
+    # Normal build system
+    make -j4
+    if test "x$RUN_TESTS" != "xno"; then
+      make test
+    fi
   fi
   if test "x$RUN_LINT" = "xyes"; then
     llvm-config --version
