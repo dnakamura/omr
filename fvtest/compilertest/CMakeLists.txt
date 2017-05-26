@@ -91,6 +91,9 @@ list(APPEND JIT_PRODUCT_SOURCE_FILES
 set( CMAKE_C_FLAGS "-pthread -fomit-frame-pointer -fasynchronous-unwind-tables -Wreturn-type -fno-dollars-in-identifiers")
 set( CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++0x -fno-rtti -fno-threadsafe-statics -Wno-deprecated -Wno-enum-compare -Wno-invalid-offsetof -Wno-write-strings -Wno-narrowing")
 
+add_definitions(
+	-DTEST_PROJECT_SPECIFIC
+)
 
 #if 64bit
 add_definitions(

@@ -41,7 +41,12 @@ add_definitions(
 	-DBITVECTOR_BIT_NUMBERING_MSB
 	-DJITTEST
 	-DJITBUILDER_SPECIFIC
+
+	-DSUPPORTS_THREAD_LOCAL
+	-D_LONG_LONG
+	-DBITVECTOR_BIT_NUMBERING_MSB
 )
+
 #if 64bit
 add_definitions(
 	-DTR_HOST_64BIT
@@ -55,14 +60,6 @@ add_definitions(
 add_definitions(-DTR_HOST_X86)
 add_definitions(-DTR_TARGET_X86)
 #endif
-
-add_definitions(
-	-DSUPPORTS_THREAD_LOCAL
-	-D_LONG_LONG
-	-DBITVECTOR_BIT_NUMBERING_MSB
-	-DJITTEST
-	-DTEST_PROJECT_SPECIFIC
-)
 
 
 add_library(jitbuilder STATIC
