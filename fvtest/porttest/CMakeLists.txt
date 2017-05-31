@@ -96,12 +96,12 @@ target_link_libraries(sltestlib PRIVATE omr_shared)
 
 #Shared lib test broken on windows
 if(OMR_HOST_OS STREQUAL "win")
-	add_test(NAME porttest COMMAND omrporttest --gtest-filter="-PortSlTest.*")
+	add_test(NAME porttest COMMAND omrporttest "--gtest-filter='-PortSlTest.*'")
 else()
 	add_test(NAME porttest COMMAND omrporttest)
 endif()
 
 if(OMR_OPT_CUDA)
-	add_test(NAME cuda_porttest COMMAND omrporttest --gtest_filter="Cuda*" -earlyExit)
+	add_test(NAME cuda_porttest COMMAND omrporttest "--gtest_filter='Cuda*'" -earlyExit)
 endif()
 
