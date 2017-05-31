@@ -28,7 +28,9 @@
 
 #if defined(WIN32)
 #include <windows.h>
+#include <stdio.h>
 #endif
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -71,6 +73,10 @@ wmain(int argc, wchar_t **argv, wchar_t **envp)
 	char *cursor = NULL;
 	int i, length, envc;
 	int rc;
+
+	for(i = 0; i < argc; ++i){
+			printf("[%d] %ls\n", i, argv[i]);
+	}
 
 	/* Translate argv to UTF-8 */
 	length = argc; /* 1 null terminator per string */
@@ -117,6 +123,10 @@ wmain(int argc, wchar_t **argv, wchar_t **envp)
 		translated_envp[envc] = NULL; /* NULL terminated the new envp */
 	}
 
+	printf("===========================================\n");
+	for(i=0; i < argc; ++i){
+			printf("[%d] %s\n", i, translated_argv[i]);
+		}
 	rc = CHARMAIN(argc, translated_argv, translated_envp);
 
 	/* Free the translated strings */
