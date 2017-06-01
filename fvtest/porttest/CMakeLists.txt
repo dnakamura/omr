@@ -96,7 +96,7 @@ target_link_libraries(sltestlib PRIVATE omr_shared)
 
 #Shared lib test broken on windows
 if(OMR_HOST_OS STREQUAL "win")
-	add_test(NAME porttest COMMAND omrporttest "--gtest-filter='-PortSlTest.*'")
+	add_test(NAME porttest COMMAND omrporttest --gtest_filter="-PortSlTest.*")
 else()
 	add_test(NAME porttest COMMAND omrporttest)
 endif()
