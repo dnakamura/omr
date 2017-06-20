@@ -49,20 +49,21 @@ SupportThreadInfo *info;
 #define ONESEC	1000 /**< 1 sec in ms */
 
 /**
- * Generate CPU Load for 1 second
+ * Generate CPU Load for number of seconds
  */
 static void
-cpuLoad(void)
+cpuLoad(int64_t seconds=1)
 {
 	OMRPORT_ACCESS_FROM_OMRPORT(omrTestEnv->getPortLibrary());
 	int64_t start = 0;
 	int64_t end = 0;
+  int64_t duration = seconds * ONESEC;
 
 	start = omrtime_current_time_millis();
 	/* Generate CPU Load for 1 second */
 	do {
 		end = omrtime_current_time_millis();
-	} while ((end - start) < ONESEC);
+	} while ((end - start) < duration);
 }
 
 #define THREEMINS	180
@@ -107,9 +108,9 @@ runTest(void *arg)
 	CHECK_AND_SAVE_ERROR(start_time);
 
 	/* Do work, earlier threads do less work than later threads */
-	for (i = 0; i < (arrayLength + info->counter); i++) {
-		cpuLoad();
-	}
+	//for (i = 0; i < (arrayLength + info->counter); i++) {
+		cpuLoad(arrayLength + info->counter);
+	//}
 
 	/* Capture CPU time info using both APIs */
 	tinfo->cpu_time = omrthread_get_cpu_time(tinfo->j9tid);
