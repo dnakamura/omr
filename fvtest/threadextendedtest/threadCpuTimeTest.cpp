@@ -89,11 +89,10 @@ static int32_t J9THREAD_PROC
 runTest(void *arg)
 {
 	uintptr_t i = 0;
-	uintptr_t arrayLength = NUM_ITERATIONS;
 	uint32_t *tcount = (uint32_t *)arg;
 	int64_t start_time = 0;
 	ThreadInfo *tinfo = &info->thread_info[*tcount];
-
+  const uint32_t iterations = NUM_ITERATIONS + *tcount;
 	/* Increment the counters to indicate a new thread has started */
 	omrthread_monitor_enter(info->synchronization);
 	info->counter += 1;
@@ -107,7 +106,7 @@ runTest(void *arg)
 	CHECK_AND_SAVE_ERROR(start_time);
 
 	/* Do work, earlier threads do less work than later threads */
-	for (i = 0; i < (arrayLength + info->counter); i++) {
+	for (i = 0; i < iterations; i++) {
 		cpuLoad();
 	}
 
