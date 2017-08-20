@@ -16,22 +16,26 @@
 #    Multiple authors (IBM Corp.) - initial implementation and documentation
 ###############################################################################
 
-add_library(omrtrace STATIC
-	omrtraceapi.cpp
-	omrtracecomponent.cpp
-	omrtraceformatter.cpp
-	omrtracelog.cpp
-	omrtracemain.cpp
-	omrtracemisc.cpp
-	omrtraceoptions.cpp
-	omrtracepublish.cpp
-	omrtracewrappers.cpp
-)
+#Allow consumers to provide their own implementation of omrtrace
+# If OMR_OVERRIDE_TRACE is true, consumer resposnsible for creating an omrtrace target
+if(NOT OMR_OVERRIDE_TRACE)
+	add_library(omrtrace STATIC
+		omrtraceapi.cpp
+		omrtracecomponent.cpp
+		omrtraceformatter.cpp
+		omrtracelog.cpp
+		omrtracemain.cpp
+		omrtracemisc.cpp
+		omrtraceoptions.cpp
+		omrtracepublish.cpp
+		omrtracewrappers.cpp
+	)
 
-target_link_libraries(omrtrace
-	PUBLIC
-	omrutil
-)
+	target_link_libraries(omrtrace
+		PUBLIC
+		omrutil
+	)
+endif()
 #TODO: check if following makefile fragment still required:
 #ifeq (gcc,$(OMR_TOOLCHAIN))
 ## disable builtin strncpy buffer length check for optimized builds (_FORTIFY_SOURCE=1 requires -O3)

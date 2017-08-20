@@ -334,14 +334,6 @@ endif()
 
 target_sources(omrport_obj PRIVATE ${resolvedPaths})
 
-add_library(omrport STATIC
-	$<TARGET_OBJECTS:omrport_obj>
-)
-
-target_link_libraries(omrport
-	j9thrstatic
-	j9hashtable
-)
 
 target_include_directories(omrport_obj PRIVATE
 	../nls
@@ -350,19 +342,32 @@ target_include_directories(omrport_obj PRIVATE
 # This flag indicates that we are compiling the port library
 target_compile_definitions(omrport_obj PRIVATE -DOMRPORT_LIBRARY_DEFINE)
 
+# Allow Consumers to override omrport
+# If OMR_OVERRIDE_PORT is true, consumer is responsible for implementing omrport target
+if(NOT OMR_OVERRIDE_PORT)
+	add_library(omrport STATIC
+		$<TARGET_OBJECTS:omrport_obj>
+	)
+
+	target_link_libraries(omrport
+		j9thrstatic
+		j9hashtable
+	)
 
 
-#TODO hack to get to compile. Need platform checks
-if(NOT OMR_HOST_OS STREQUAL "win")
-	if(NOT OMR_HOST_OS STREQUAL "zos")
-		target_link_libraries(omrport dl)
+	#TODO hack to get to compile. Need platform checks
+	if(NOT OMR_HOST_OS STREQUAL "win")
+		if(NOT OMR_HOST_OS STREQUAL "zos")
+			target_link_libraries(omrport dl)
+		endif()
+	endif()
+
+	if(OMR_HOST_OS STREQUAL "osx")
+	  target_link_libraries(omrport iconv)
+	endif()
+
+	if(OMR_HOST_OS STREQUAL "win")
+		target_link_libraries(omrport psapi pdh)
 	endif()
 endif()
 
-if(OMR_HOST_OS STREQUAL "osx")
-  target_link_libraries(omrport iconv)
-endif()
-
-if(OMR_HOST_OS STREQUAL "win")
-	target_link_libraries(omrport psapi pdh)
-endif()
