@@ -82,4 +82,4 @@ script:
 after_script:
   - ccache -s
 after_failure:
-  - artifacts upload build/
+  - bash ./scripts/upload_artifacts.sh
