@@ -76,10 +76,10 @@ before_script:
   - ulimit -c unlimited
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PATH=/usr/local/opt/ccache/libexec:$PATH ; fi
   - ccache -s -z
-  - "gem install travis-artifacts"
+  - curl -sL https://raw.githubusercontent.com/travis-ci/artifacts/master/install | bash
 script:
   - bash ./scripts/build-on-travis.sh
 after_script:
   - ccache -s
 after_failure:
-  - "travis-artifacts upload --path build"
+  - artifacts upload build/
