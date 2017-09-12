@@ -62,6 +62,8 @@ elseif(OMR_HOST_OS STREQUAL "linux")
 	)
 endif()
 
+list(APPEND OMR_PLATFORM_CXX_COMPILE_OPTIONS -qnortti -qnoeh)
+
 # Testarossa build variables. Longer term the distinction between TR and the rest 
 # of the OMR code should be heavily reduced. In the mean time, we keep
 # the distinction
@@ -77,6 +79,7 @@ list(APPEND TR_COMPILE_OPTIONS
 	-qfuncsect 
 	-qsuppress=1540-1087:1540-1088:1540-1090:1540-029:1500-029
 	-qdebug=nscrep
+	-qeh
 )
 
 # TR_CXX_COMPILE_OPTIONS are appended to CMAKE_CXX_FLAGS, and so apply only to

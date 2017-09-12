@@ -34,6 +34,10 @@ else()
 	)
 endif()
 
+list(APPEND OMR_PLATFORM_COMPILE_OPTIONS -fno-strict-aliasing)
+
+list(APPEND OMR_PLATFORM_CXX_COMPILE_OPTIONS -fno-rtti -fno-exceptions -fno-threadsafe-statics)
+
 # Testarossa build variables. Longer term the distinction between TR and the rest 
 # of the OMR code should be heavily reduced. In the mean time, we keep
 # the distinction
@@ -49,6 +53,7 @@ list(APPEND TR_COMPILE_OPTIONS
 # C++ file compilation
 list(APPEND TR_CXX_COMPILE_OPTIONS 
 	-std=c++0x
+	-fexceptions
 )
 
 # TR_C_COMPILE_OPTIONS are appended to CMAKE_C_FLAGS, and so apply only to
