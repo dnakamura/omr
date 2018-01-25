@@ -18,8 +18,9 @@
 #
 # SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR LicenseRef-GPL-2.0 WITH Assembly-exception
 ###############################################################################
+include(NewJit)
 
-include(OmrCompilerSupport)
+#include(OmrCompilerSupport)
 
 set(COMPILERTEST_FILES
 	compile/Method.cpp
@@ -30,7 +31,6 @@ set(COMPILERTEST_FILES
 	runtime/TestCodeCacheManager.cpp
 	runtime/TestJitConfig.cpp
 )
-
 if(OMR_ARCH_X86)
 	list(APPEND COMPILERTEST_FILES
 		x/codegen/Evaluator.cpp
@@ -54,19 +54,36 @@ elseif(OMR_ARCH_S390)
 	)
 endif()
 
+
+
+
+
 create_omr_compiler_library(
 	NAME testcompiler
 	OBJECTS ${COMPILERTEST_FILES}
+
+)
+target_compile_definitions(testcompiler
+	PUBLIC
+	#TODO are these public or private?
+	JITTEST
+	TEST_PROJECT_SPECIFIC
+	PROD_WITH_ASSUMES
+)
+
+#[[
 	DEFINES
 		JITTEST
 		TEST_PROJECT_SPECIFIC
 		PROD_WITH_ASSUMES
-		INCLUDES ${omr_SOURCE_DIR}/fvtest
-)
+	INCLUDES 
+	${omr_SOURCE_DIR}/fvtest
+]]
 
+#[[
 # Export paths for dependent objects
 make_compiler_target(testcompiler INTERFACE COMPILER testcompiler)
-
+]]
 add_executable(compilertest
 	tests/main.cpp
 	tests/BuilderTest.cpp
@@ -97,10 +114,13 @@ add_executable(compilertest
 	tests/injectors/TernaryOpIlInjector.cpp
 	tests/injectors/UnaryOpIlInjector.cpp
 )
+target_link_libraries(compilertest
+	testcompiler
+)
 
 
 # Inherit the include path from the compiler component
-make_compiler_target(compilertest PRIVATE COMPILER testcompiler)
+#make_compiler_target(compilertest PRIVATE COMPILER testcompiler)
 
 # target_include_directories(compilertest PRIVATE
 # 	${PROJECT_SOURCE_DIR}/third_party/gtest-1.7.0/
@@ -116,3 +136,7 @@ target_link_libraries(compilertest
 set_property(TARGET compilertest PROPERTY FOLDER fvtest)
 
 add_test(NAME CompilerTest COMMAND compilertest)
+
+
+
+

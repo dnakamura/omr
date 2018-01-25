@@ -49,7 +49,7 @@ add_library(tril STATIC
 # This is mildly peculiar. Because tril relies
 # on jitbuilder as a 'backend' of sorts, we use
 # its includes. Tril exports this as interface
-make_compiler_target(tril PUBLIC COMPILER ${TRIL_BACKEND_LIB}) 
+#make_compiler_target(tril PUBLIC COMPILER ${TRIL_BACKEND_LIB}) 
 
 target_include_directories(tril PUBLIC
 	${CMAKE_CURRENT_BINARY_DIR}

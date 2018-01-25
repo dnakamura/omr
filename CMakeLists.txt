@@ -39,6 +39,9 @@ include(OmrPlatform)
 include(OmrTracegen)
 include(OmrSanitizerSupport)
 
+
+include(NewJit)
+
 ###
 ### Set up the global platform configuration
 ###
@@ -139,6 +142,8 @@ endif(OMR_GC)
 if(OMR_DDR)
 	add_subdirectory(ddr)
 endif(OMR_DDR)
+
+add_subdirectory(compiler)
 
 if(OMR_JITBUILDER)
 	add_subdirectory(jitbuilder)

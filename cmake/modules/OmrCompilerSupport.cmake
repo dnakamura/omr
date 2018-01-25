@@ -35,6 +35,7 @@ set(OMR_COMPILER_SUPPORT_ 1)
 
 ## Tools and helpers:
 
+message(FATAL_ERROR "Don't include OmrCompilerSupport")
 Find_package(Perl)
 include(OmrUtility)
 
