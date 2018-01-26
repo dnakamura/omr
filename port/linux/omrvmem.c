@@ -1660,7 +1660,7 @@ omrvmem_get_process_memory_size(struct OMRPortLibrary *portLibrary, J9VMemMemory
 		Trc_PRT_vmem_get_process_memory_failed("pageSize", sysconfError);
 		result = OMRPORT_ERROR_VMEM_OPFAILED;
 	} else {
-		char *statFilename = "/proc/self/statm";
+		const char *statFilename = "/proc/self/statm";
 		FILE *statmStream = fopen(statFilename, "r");
 		if (NULL != statmStream) {
 			unsigned long programSize = 0;

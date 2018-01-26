@@ -68,7 +68,7 @@ syslogOpen(struct OMRPortLibrary *portLibrary, uintptr_t flags)
 {
 	int logopt = LOG_PID | LOG_NOWAIT | LOG_ODELAY;
 	int facility = LOG_USER;
-	char *defaultEventSource = "IBM Java";
+	const char *defaultEventSource = "IBM Java";
 	char *syslogEventSource;
 
 	/* look for the name that will be used for logging (internal use only) */

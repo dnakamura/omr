@@ -495,7 +495,7 @@ omr_error_t OMR_Glue_LinkLanguageThreadToOMRThread(void *languageThread, OMR_VMT
 omr_error_t OMR_Glue_GetVMDirectoryToken(void **token);
 #endif /* defined(WIN32) */
 
-char *OMR_Glue_GetThreadNameForUnamedThread(OMR_VMThread *vmThread);
+const char *OMR_Glue_GetThreadNameForUnamedThread(OMR_VMThread *vmThread);
 
 /**
  * Get the number of method properties. This is the number of properties per method

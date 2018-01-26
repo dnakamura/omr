@@ -77,7 +77,7 @@ static intptr_t init_spinCounts(omrthread_library_t lib);
 static void unblock_spinlock_threads(omrthread_t self, omrthread_monitor_t monitor);
 #endif /* OMR_THR_THREE_TIER_LOCKING */
 
-static intptr_t init_threadParam(char *name, uintptr_t *pDefault);
+static intptr_t init_threadParam(const char *name, uintptr_t *pDefault);
 static intptr_t init_spinParameters(omrthread_library_t lib);
 
 static void threadInterrupt(omrthread_t thread, uintptr_t interruptFlag);
@@ -523,7 +523,7 @@ init_global_monitor(omrthread_library_t lib)
  *
  */
 static intptr_t
-init_threadParam(char *name, uintptr_t *pDefault)
+init_threadParam(const char *name, uintptr_t *pDefault)
 {
 	uintptr_t *p;
 
@@ -1074,7 +1074,7 @@ omrthread_lib_clear_flags(uintptr_t flags)
  *
  */
 uintptr_t *
-omrthread_global(char *name)
+omrthread_global(const char *name)
 {
 	J9ThreadGlobal *global;
 	omrthread_library_t lib = GLOBAL_DATA(default_library);

@@ -25,10 +25,10 @@
 #include "omrport.h"
 #include "omr.h"
 
-static char *
+static const char *
 getOMRVMThreadNameNoLock(OMR_VMThread *vmThread)
 {
-	char *name = NULL;
+	const char *name = NULL;
 
 	name = (char *)vmThread->threadName;
 
@@ -38,14 +38,14 @@ getOMRVMThreadNameNoLock(OMR_VMThread *vmThread)
 	return name;
 }
 
-char *
+const char *
 getOMRVMThreadName(OMR_VMThread *vmThread)
 {
 	omrthread_monitor_enter(vmThread->threadNameMutex);
 	return getOMRVMThreadNameNoLock(vmThread);
 }
 
-char *
+const char *
 tryGetOMRVMThreadName(OMR_VMThread *vmThread)
 {
 	if (omrthread_monitor_try_enter(vmThread->threadNameMutex) == 0) {

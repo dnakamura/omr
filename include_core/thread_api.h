@@ -538,7 +538,7 @@ omrthread_exit(omrthread_monitor_t monitor);
 * @return uintptr_t*
 */
 uintptr_t *
-omrthread_global(char *name);
+omrthread_global(const char *name);
 
 
 /**

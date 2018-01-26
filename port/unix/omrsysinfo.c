@@ -198,7 +198,7 @@ typedef struct CopyEnvToBufferArgs {
 /* For the omrsysinfo_limit_iterator */
 struct  {
 	int resource;
-	char *resourceName;
+	const char *resourceName;
 } limitMap[] = {
 #if defined RLIMIT_AS
 	{RLIMIT_AS, "RLIMIT_AS"},
@@ -307,7 +307,7 @@ static omrthread_monitor_t cgroupEntryListMonitor;
 static intptr_t cwdname(struct OMRPortLibrary *portLibrary, char **result);
 static uint32_t getLimitSharedMemory(struct OMRPortLibrary *portLibrary, uint64_t *limit);
 #if defined(LINUX) || defined(AIXPPC) || defined(J9ZOS390)
-static intptr_t readSymbolicLink(struct OMRPortLibrary *portLibrary, char *linkFilename, char **result);
+static intptr_t readSymbolicLink(struct OMRPortLibrary *portLibrary, const char *linkFilename, char **result);
 #endif /* defined(LINUX) || defined(AIXPPC) || defined(J9ZOS390) */
 #if defined(AIXPPC) || defined(J9ZOS390)
 static BOOLEAN isSymbolicLink(struct OMRPortLibrary *portLibrary, char *filename);
@@ -970,7 +970,7 @@ isSymbolicLink(struct OMRPortLibrary *portLibrary, char *filename)
  */
 #if defined(LINUX) || defined(AIXPPC) || defined(J9ZOS390)
 static intptr_t
-readSymbolicLink(struct OMRPortLibrary *portLibrary, char *linkFilename, char **result)
+readSymbolicLink(struct OMRPortLibrary *portLibrary, const char *linkFilename, char **result)
 {
 #if defined(LINUX) || defined(AIXPPC)
 	char fixedBuffer[PATH_MAX + 1];

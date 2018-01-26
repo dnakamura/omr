@@ -485,7 +485,7 @@ build_catalog_name(struct OMRPortLibrary *portLibrary, int32_t usePath, int32_t 
 {
 	uintptr_t len = 1;
 	char *catalog = NULL;
-	char *defaultCatalog = "." DIR_SEPARATOR_STR;
+	const char *defaultCatalog = "." DIR_SEPARATOR_STR;
 	J9NLSDataCache *nls;
 
 #if defined(NLS_DEBUG_TRACE)
@@ -499,7 +499,7 @@ build_catalog_name(struct OMRPortLibrary *portLibrary, int32_t usePath, int32_t 
 	nls = &portLibrary->portGlobals->nls_data;
 
 	if (!nls->nPaths) {
-		portLibrary->nls_set_catalog(portLibrary, (const char **)&defaultCatalog, 1, "java", "properties");
+		portLibrary->nls_set_catalog(portLibrary, &defaultCatalog, 1, "java", "properties");
 		if (!nls->baseCatalogName) {
 			goto _done;
 		}

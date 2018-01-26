@@ -404,7 +404,7 @@ struct OMR_VMThread;
  * @param[in] vmThread The vmthread.
  * @return The thread name.
  */
-char *getOMRVMThreadName(struct OMR_VMThread *vmThread);
+const char *getOMRVMThreadName(struct OMR_VMThread *vmThread);
 
 /**
  * Try to lock and get the thread name. Fails if locking requires blocking.
@@ -414,7 +414,7 @@ char *getOMRVMThreadName(struct OMR_VMThread *vmThread);
  * @param[in] vmThread The vmthread.
  * @return NULL if we failed to get the lock, a non-NULL thread name if we succeeded.
  */
-char *tryGetOMRVMThreadName(struct OMR_VMThread *vmThread);
+const char *tryGetOMRVMThreadName(struct OMR_VMThread *vmThread);
 
 /**
  * Unlock the thread name that was obtained using getOMRVMThreadName() or tryGetOMRVMThreadName().
