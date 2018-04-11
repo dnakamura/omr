@@ -27,7 +27,7 @@ IMPLIB ?= lib
 
 # Assembler flags and Preprocessor
 ifeq (1,$(OMR_ENV_DATA64))
-  GLOBAL_ASFLAGS+=/c /Cp /nologo -DWIN32 -DWIN64 -DJ9HAMMER
+  GLOBAL_ASFLAGS+=/c /Cp /nologo -DOMRWINDOWS -DWIN32 -DWIN64 -DJ9HAMMER
   GLOBAL_CPPFLAGS+=-D_AMD64_=1 -DWIN64 -D_WIN64 -DWIN32 -D_WIN32 -DJ9HAMMER
 else
   # /c Assemble without linking
@@ -36,7 +36,7 @@ else
   # /coff generate COFF format object file
   # /Gd Use C calls (i.e. prepend underscored to symbols)
   # /Zm Enable MASM 5.10 compatibility
-  GLOBAL_ASFLAGS+=/c /Cp /nologo /safeseh /coff /Gd -DWIN32 /Zm
+  GLOBAL_ASFLAGS+=/c /Cp /nologo /safeseh /coff /Gd -DOMRWINDOWS -DWIN32 /Zm
   GLOBAL_CPPFLAGS+=-D_X86_=1 -DWIN32 -D_WIN32
 endif
 
