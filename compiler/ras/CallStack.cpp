@@ -327,7 +327,7 @@ bool TR_MvsCallStackIterator::getNext ()
    return true;
    }
 
-#elif defined(WINDOWS) && defined(TR_HOST_X86) && defined(TR_HOST_32BIT)
+#elif defined(OMRWINDOWS) && defined(TR_HOST_X86) && defined(TR_HOST_32BIT)
 
 #include "ras/CallStack.hpp"
 #include <windows.h>
@@ -497,6 +497,6 @@ bool TR_WinCallStackIterator::getNext()
    return !_done;
    }
 
-#elif !(defined(WINDOWS) && defined(TR_HOST_X86) && defined(TR_HOST_32BIT))
+#elif !(defined(OMRWINDOWS) && defined(TR_HOST_X86) && defined(TR_HOST_32BIT))
 
-#endif
+#endif /* defined(AIXPPC) */

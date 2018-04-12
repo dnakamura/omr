@@ -19,13 +19,13 @@
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR LicenseRef-GPL-2.0 WITH Assembly-exception
  *******************************************************************************/
 
-#ifdef WINDOWS
+#if defined(OMRWINDOWS)
 
 #ifdef BOOLEAN
 /* There is a collision between J9's definition of BOOLEAN and Windows headers */
 #define BOOLEAN_COLLISION_DETECTED BOOLEAN
 #undef BOOLEAN
-#endif
+#endif /* defined(OMRWINDOWS) */
 
 #ifdef boolean
 /* There is a collision between J9's definition of boolean and Windows headers */

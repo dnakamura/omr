@@ -34,7 +34,7 @@ int strnicmp_ignore_locale(const char *s1, const char *s2, size_t n);
 #include <strings.h>
    #define STRICMP strcasecmp
    #define STRNICMP strncasecmp
-#elif defined(WINDOWS)
+#elif defined(OMRWINDOWS)
    #define STRICMP _stricmp
    #define STRNICMP _strnicmp
 #elif PILOT
@@ -67,4 +67,4 @@ int strnicmp_ignore_locale(const char *s1, const char *s2, size_t n);
       }
       return 0;
    }
-#endif
+#endif /* J9ZOS390 || AIXPPC || LINUX || OSX */

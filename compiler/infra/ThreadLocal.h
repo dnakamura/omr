@@ -34,8 +34,8 @@
 
 #if defined(SUPPORTS_THREAD_LOCAL)
 
-#if defined(WINDOWS) || (defined(LINUX) && !defined(OMRZTPF)) || defined(OSX) || defined(AIXPPC)
- #if defined(WINDOWS)
+#if defined(OMRWINDOWS) || (defined(LINUX) && !defined(OMRZTPF)) || defined(OSX) || defined(AIXPPC)
+ #if defined(OMRWINDOWS)
   #include "windows.h"
   #define tlsDeclare(type, variable) extern DWORD variable
   #define tlsDefine(type, variable) DWORD variable = TLS_OUT_OF_INDEXES
@@ -50,8 +50,8 @@
   #define tlsFree(variable)  // not required on win, linux or AIX
   #define tlsSet(variable, value) variable = value
   #define tlsGet(variable, type) (variable)
- #endif
-#else /* !(defined(WINDOWS) || (defined(LINUX) && !defined(OMRZTPF)) || defined(OSX) || defined(AIXPPC)) */  /* Mainly for defined(OMRZTPF) or defined(J9ZOS390) */
+ #endif /* defined(OMRWINDOWS) */
+#else /* !(defined(OMRWINDOWS) || (defined(LINUX) && !defined(OMRZTPF)) || defined(OSX) || defined(AIXPPC)) */  /* Mainly for defined(OMRZTPF) or defined(J9ZOS390) */
  #include <pthread.h>
 
  #define tlsDeclare(type, variable) extern pthread_key_t variable
@@ -64,7 +64,7 @@
  #else
   #define tlsGet(variable, type) ((type) pthread_getspecific(variable))
  #endif
-#endif
+#endif /* defined(OMRWINDOWS) || (defined(LINUX) && !defined(OMRZTPF)) || defined(OSX) || defined(AIXPPC) */
 
 #else /* !defined(SUPPORTS_THREAD_LOCAL) */
  #define tlsDeclare(type, variable) extern type variable

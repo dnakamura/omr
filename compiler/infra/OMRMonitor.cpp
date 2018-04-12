@@ -81,36 +81,36 @@ OMR::Monitor::destroy(TR::Monitor *monitor)
 void
 OMR::Monitor::destroy()
    {
-#ifdef WINDOWS
+#if defined(OMRWINDOWS)
    MUTEX_DESTROY(_monitor);
 #else
    int32_t rc = MUTEX_DESTROY(_monitor);
    TR_ASSERT(rc == 0, "error destroying monitor\n");
-#endif
+#endif /* defined(OMRWINDOWS) */
    }
 
 void
 OMR::Monitor::enter()
    {
-#ifdef WINDOWS
+#if defined(OMRWINDOWS)
    MUTEX_ENTER(_monitor);
 #else
    int32_t rc = MUTEX_ENTER(_monitor);
    TR_ASSERT(rc == 0, "error locking monitor\n");
-#endif
+#endif /* defined(OMRWINDOWS) */
    }
 
 int32_t
 OMR::Monitor::exit()
    {
-#ifdef WINDOWS
+#if defined(OMRWINDOWS)
    MUTEX_EXIT(_monitor);
    return 0;
 #else
    int32_t rc = MUTEX_EXIT(_monitor);
    TR_ASSERT(rc == 0, "error unlocking monitor\n");
    return rc;
-#endif
+#endif /* defined(OMRWINDOWS) */
    }
 
 char const *

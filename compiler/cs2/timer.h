@@ -36,12 +36,12 @@
 #include "cs2/listof.h"
 #include "cs2/hashtab.h"
 
-#if defined(WINDOWS)
+#if defined(OMRWINDOWS)
 #include <time.h>
 #include "windows_api.h"
 #else
 #include <sys/time.h>
-#endif
+#endif /* defined(OMRWINDOWS) */
 
 
 #ifdef CS2_ALLOCINFO
@@ -110,7 +110,7 @@ private:
 };
 
 typedef BSDTimer PlatformTimer;
-#elif defined(WINDOWS)
+#elif defined(OMRWINDOWS)
 /**
  * \brief Windows-specific timer class.
  *
@@ -166,7 +166,7 @@ class BaseTimer {
 };
 
 typedef BaseTimer PlatformTimer;
-#endif
+#endif /* defined(_AIX) */
 
 /**
  * \brief A general purpose timer class.
