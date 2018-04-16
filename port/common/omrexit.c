@@ -29,11 +29,11 @@
 
 #include "omrport.h"
 
-#if !defined(WIN32)
+#if !defined(OMRWINDOWS)
 #if defined(OMRPORT_OMRSIG_SUPPORT)
 extern void omrsig_chain_at_shutdown_and_exit(struct OMRPortLibrary *portLibrary);
 #endif /* defined(OMRPORT_OMRSIG_SUPPORT) */
-#endif /* !defined(WIN32) */
+#endif /* !defined(OMRWINDOWS) */
 
 
 /**
@@ -72,11 +72,11 @@ omrexit_shutdown_and_exit(struct OMRPortLibrary *portLibrary, int32_t exitCode)
 	portLibrary->cuda_shutdown(portLibrary);
 #endif /* defined(OMR_OPT_CUDA) */
 
-#if !defined(WIN32)
+#if !defined(OMRWINDOWS)
 #if defined(OMRPORT_OMRSIG_SUPPORT)
 	omrsig_chain_at_shutdown_and_exit(portLibrary);
 #endif /* defined(OMRPORT_OMRSIG_SUPPORT) */
-#endif
+#endif /* !defined(OMRWINDOWS) */
 
 	exit((int)exitCode);
 }

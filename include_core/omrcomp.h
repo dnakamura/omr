@@ -255,7 +255,7 @@ typedef double SYS_FLOAT;
 #define HAS_BUILTIN_EXPECT
 #endif /* RS6000 */
 
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 typedef double 					SYS_FLOAT;
 
 #define NO_LVALUE_CASTING
@@ -294,7 +294,7 @@ typedef double 					SYS_FLOAT;
 /* Only for use on static functions */
 #define VMINLINE_ALWAYS __forceinline
 #endif /* __GNUC__ */
-#endif /* WIN32 */
+#endif /* defined(OMRWINDOWS) */
 
 #if defined(J9ZOS390)
 typedef double				SYS_FLOAT;

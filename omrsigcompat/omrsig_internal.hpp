@@ -21,25 +21,25 @@
  *******************************************************************************/
  
 #include <signal.h>
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 /* windows.h defined UDATA.  Ignore its definition */
 #define UDATA UDATA_win32_
 #include <windows.h>
 #undef UDATA	/* this is safe because our UDATA is a typedef, not a macro */
-#else /* defined(WIN32) */
+#else /* defined(OMRWINDOWS) */
 #include <pthread.h>
-#endif /* defined(WIN32) */
+#endif /* defined(OMRWINDOWS) */
 
 #include "AtomicSupport.hpp"
 
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 #include "omrsig.h"
 
 struct sigaction {
 	sighandler_t sa_handler;
 };
 
-#else /* defined(WIN32) */
+#else /* defined(OMRWINDOWS) */
 
 /* For now, only WIN32 is known to not support POSIX signals. Non-WIN32
  * systems which do not have POSIX signals are also supported.
@@ -59,7 +59,7 @@ typedef void (*sigaction_t)(int sig, siginfo_t *siginfo, void *uc);
 #define SECONDARY_FLAGS_WHITELIST (SA_ONSTACK | SA_NOCLDSTOP | SA_NOCLDWAIT)
 #endif /* defined(J9ZOS390) */
 
-#endif /* defined(WIN32) */
+#endif /* defined(OMRWINDOWS) */
 
 struct OMR_SigData {
 	struct sigaction primaryAction;
@@ -76,7 +76,7 @@ struct OMR_SigData {
 #endif /* defined(J9ZOS390) */
 
 
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 
 #define LockMask
 #define SIGLOCK(sigMutex) \
@@ -87,7 +87,7 @@ struct OMR_SigData {
 #if !defined(MSVC_RUNTIME_DLL)
 #define MSVC_RUNTIME_DLL "MSVCR100.dll"
 #endif /* !defined(MSVC_RUINTIME_DLL) */
-#else /* defined(WIN32) */
+#else /* defined(OMRWINDOWS) */
 
 #define LockMask sigset_t *previousMask
 #define SIGLOCK(sigMutex) \
@@ -96,7 +96,7 @@ struct OMR_SigData {
 #define SIGUNLOCK(sigMutex) \
 	sigMutex.unlock(&previousMask);
 
-#endif /* defined(WIN32) */
+#endif /* defined(OMRWINDOWS) */
 
 class SigMutex
 {
@@ -111,12 +111,12 @@ public:
 
 	void lock(LockMask)
 	{
-#if !defined(WIN32)
+#if !defined(OMRWINDOWS)
 		/* Receiving a signal while a thread is holding a lock would cause deadlock. */
 		sigset_t mask;
 		sigfillset(&mask);
 		pthread_sigmask(SIG_BLOCK, &mask, previousMask);
-#endif /* !defined(WIN32) */
+#endif /* !defined(OMRWINDOWS) */
 		uintptr_t oldLocked = 0;
 		do {
 			oldLocked = locked;
@@ -129,8 +129,8 @@ public:
 		VM_AtomicSupport::readWriteBarrier();
 		locked = 0;
 
-#if !defined(WIN32)
+#if !defined(OMRWINDOWS)
 		pthread_sigmask(SIG_SETMASK, previousMask, NULL);
-#endif /* !defined(WIN32) */
+#endif /* !defined(OMRWINDOWS) */
 	}
 };

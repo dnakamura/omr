@@ -27,7 +27,7 @@ handlerIsFunction(sighandler_t handler)
 	return (SIG_DFL != handler) && (SIG_IGN != handler) && (NULL != handler);
 }
 
-#if !defined(WIN32)
+#if !defined(OMRWINDOWS)
 bool
 handlerIsFunction(const struct sigaction *act)
 {
@@ -36,7 +36,7 @@ handlerIsFunction(const struct sigaction *act)
 			   && (SIG_DFL != (sighandler_t)act->sa_sigaction)
 			   && (SIG_IGN != (sighandler_t)act->sa_sigaction));
 }
-#endif /* !defined(WIN32) */
+#endif /* !defined(OMRWINDOWS) */
 
 void
 createThread(omrthread_t *newThread, uintptr_t suspend, omrthread_detachstate_t detachstate,

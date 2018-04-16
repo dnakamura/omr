@@ -30,9 +30,9 @@
 
 #include "VerboseHandlerOutputStandard.hpp"
 
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 #define snprintf _snprintf
-#endif /* defined(WIN32) */
+#endif /* defined(OMRWINDOWS) */
 
 MM_VerboseManagerImpl *
 MM_VerboseManagerImpl::newInstance(MM_EnvironmentBase *env, OMR_VM* vm)

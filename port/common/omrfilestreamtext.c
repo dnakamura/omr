@@ -57,9 +57,9 @@
  * CRLFNEWLINES will be defined when we require changing newlines from '\n' to '\r\n'
  */
 #undef CRLFNEWLINES
-#if defined(WIN32) || defined(WIN64)
+#if defined(OMRWINDOWS)
 #define CRLFNEWLINES
-#endif /* defined(WIN32) || defined(WIN64) */
+#endif /* defined(OMRWINDOWS) */
 
 static intptr_t
 write_all(struct OMRPortLibrary *portLibrary, OMRFileStream *fileStream, const char *buf, intptr_t nbytes);

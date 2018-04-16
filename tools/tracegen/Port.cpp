@@ -28,21 +28,21 @@
 #endif /* defined(LINUX) */
 #include <string.h>
 
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 #include <direct.h>
 #define J9FILE_UNC_EXTENDED_LENGTH_PREFIX (L"\\\\?\\")
-#else /* defined(WIN32) */
+#else /* defined(OMRWINDOWS) */
 #include <sys/types.h>
 #if !defined(OMRZTPF)
 #include <sys/statvfs.h>
 #endif
 #include <dirent.h>
-#endif /* defined(WIN32)*/
+#endif /* defined(OMRWINDOWS)*/
 
 #include "Port.hpp"
 
 
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 RCType
 Port::omrfile_findfirst(const char *path, char **resultbuf, intptr_t *handle)
 {
@@ -494,7 +494,7 @@ cleanup:
 
 	return resolved_path;
 }
-#else /* defined(WIN32) */
+#else /* defined(OMRWINDOWS) */
 
 FILE *
 Port::fopen(const char *path, const char *mode)
@@ -718,16 +718,16 @@ Port::omrfile_realpath(const char *path)
 	}
 	return result;
 }
-#endif /* #if defined(WIN32) */
+#endif /* defined(OMRWINDOWS) */
 
 int
 Port::strncasecmp(const char *s1, const char *s2, size_t n)
 {
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 	return ::_strnicmp(s1, s2, n);
 #elif defined(J9ZOS390)
 	return ::strncasecmp(s1, s2, (int) n);
-#else /* defined(WIN32) */
+#else /* defined(OMRWINDOWS) */
 	return ::strncasecmp(s1, s2, n);
-#endif /* defined(WIN32) */
+#endif /* defined(OMRWINDOWS) */
 }

@@ -104,14 +104,14 @@ omrport_control(struct OMRPortLibrary *portLibrary, const char *key, uintptr_t v
 		return 0;
 	}
 
-#if defined (WIN32) && !defined(J9HAMMER)
+#if defined(OMRWINDOWS) && !defined(OMR_ENV_DATA64)
 	if (!strcmp("SIG_INTERNAL_HANDLER", key)) {
 		/* used by optimized code to implement fast signal handling on Windows */
 		extern int structuredExceptionHandler(struct OMRPortLibrary *portLibrary, omrsig_handler_fn handler, void *handler_arg, uint32_t flags, EXCEPTION_POINTERS *exceptionInfo);
 		*(int (**)(struct OMRPortLibrary *, omrsig_handler_fn, void *, uint32_t, EXCEPTION_POINTERS *))value = structuredExceptionHandler;
 		return 0;
 	}
-#endif
+#endif /* defined(OMRWINDOWS) && !defined(OMR_ENV_DATA64) */
 
 #if defined(OMR_PORT_ZOS_CEEHDLRSUPPORT)
 	if (!strcmp("SIG_INTERNAL_HANDLER", key)) {

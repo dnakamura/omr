@@ -59,9 +59,9 @@
 
 #define allocNameSize 64 /**< @internal buffer size for name function */
 
-#if defined(LINUX) || defined(AIXPPC) || defined(WIN32) || defined(J9ZOS390) || defined(OSX)
+#if defined(LINUX) || defined(AIXPPC) || defined(OMRWINDOWS) || defined(J9ZOS390) || defined(OSX)
 #define ENABLE_RESERVE_MEMORY_EX_TESTS
-#endif /* defined(LINUX) || defined(AIXPPC) || defined(WIN32) || defined(J9ZOS390) || defined(OSX) */
+#endif /* defined(LINUX) || defined(AIXPPC) || defined(OMRWINDOWS) || defined(J9ZOS390) || defined(OSX) */
 
 #if defined(ENABLE_RESERVE_MEMORY_EX_TESTS)
 static int omrvmem_testReserveMemoryEx_impl(struct OMRPortLibrary *, const char *, BOOLEAN, BOOLEAN, BOOLEAN, BOOLEAN, BOOLEAN);
@@ -1899,7 +1899,7 @@ TEST(PortVmemTest, vmem_test_reserveExecutableMemory)
 			function();
 			portTestEnv->log("Dynamically created function returned successfully\n");
 
-#elif defined(LINUX) || defined(WIN32) || defined(J9ZOS390) || defined(OSX)
+#elif defined(LINUX) || defined(OMRWINDOWS) || defined(J9ZOS390) || defined(OSX)
 			size_t length;
 
 #if defined(J9ZOS39064)
@@ -2147,7 +2147,7 @@ verifyFindValidPageSizeOutput(struct OMRPortLibrary *portLibrary,
 	}
 }
 
-#if (defined(LINUX) && !defined(LINUXPPC)) || defined(WIN32) || defined(OSX)
+#if (defined(LINUX) && !defined(LINUXPPC)) || defined(OMRWINDOWS) || defined(OSX)
 
 static int
 omrvmem_testFindValidPageSize_impl(struct OMRPortLibrary *portLibrary, const char *testName)
@@ -2261,9 +2261,9 @@ TEST(PortVmemTest, vmem_testFindValidPageSize)
 	portTestEnv->changeIndent(1);
 #if defined(LINUX) || defined(OSX)
 #define OMRPORT_VMEM_PAGESIZE_COUNT 5	/* This should be same as defined in port/unix_include/j9portpg.h */
-#elif defined(WIN32)
+#elif defined(OMRWINDOWS)
 #define OMRPORT_VMEM_PAGESIZE_COUNT 3	/* This should be same as defined in port/win32_include/j9portpg.h */
-#endif
+#endif /* defined(LINUX) || defined(OSX) */
 
 	uintptr_t *pageSizes = NULL;
 	uintptr_t *pageFlags = NULL;
@@ -3697,7 +3697,7 @@ TEST(PortVmemTest, vmem_testGetProcessMemorySize)
 	portTestEnv->log("OMRPORT_VMEM_PROCESS_PRIVATE = %lu.\n", size);
 #endif /* !defined(OSX) */
 
-#if defined(LINUX) || defined(WIN32) || defined(OSX)
+#if defined(LINUX) || defined(OMRWINDOWS) || defined(OSX)
 	result = omrvmem_get_process_memory_size(OMRPORT_VMEM_PROCESS_PHYSICAL, &size);
 	EXPECT_TRUE(0 == result) << "OMRPORT_VMEM_PROCESS_PHYSICAL failed";
 	EXPECT_TRUE(size > 0) << "OMRPORT_VMEM_PROCESS_PHYSICAL returned 0";
@@ -3716,8 +3716,8 @@ TEST(PortVmemTest, vmem_testGetProcessMemorySize)
 	result = omrvmem_get_process_memory_size(OMRPORT_VMEM_PROCESS_VIRTUAL, &size);
 	EXPECT_TRUE(result < 0) << "OMRPORT_VMEM_PROCESS_VIRTUAL did not fail";
 	EXPECT_TRUE(0 == size) << "value updated when query invalid";
-#endif /* aix*/
-#endif /* zos */
+#endif /* defined(LINUX) || defined(OMRWINDOWS) || defined(OSX) */
+#endif /* defined(J9ZOS390) */
 	size = 0;
 	result = omrvmem_get_process_memory_size(OMRPORT_VMEM_PROCESS_EnsureWideEnum, &size);
 	EXPECT_TRUE(result < 0) << "Invalid query not detected";

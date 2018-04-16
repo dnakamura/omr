@@ -22,13 +22,13 @@
 
 #include "omrcfg.h"
 
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 #include <windows.h>
-#endif /* defined(WIN32) */
+#endif /* defined(OMRWINDOWS) */
 
 #include "omrutil.h"
 
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 omr_error_t
 detectVMDirectory(wchar_t *vmDirectory, size_t vmDirectoryLength, wchar_t **vmDirectoryEnd)
 {
@@ -53,4 +53,4 @@ detectVMDirectory(wchar_t *vmDirectory, size_t vmDirectoryLength, wchar_t **vmDi
 	}
 	return rc;
 }
-#endif /* defined(WIN32) */
+#endif /* defined(OMRWINDOWS) */

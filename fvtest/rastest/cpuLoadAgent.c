@@ -441,11 +441,11 @@ systemTimeCPUBurn(void)
 	FILE *tempFile = NULL;
 
 	for (j = 0; j < NUM_ITERATIONS_SYSTEM_CPU_BURN; j++) {
-#if defined(WIN32) || defined(WIN64)
+#if defined(OMRWINDOWS)
 		tempFile = fopen("nul", "w");
 #else
 		tempFile = fopen("/dev/null", "w");
-#endif
+#endif /* defined(OMRWINDOWS) */
 		fwrite("garbage", 1, sizeof("garbage"), tempFile);
 		fclose(tempFile);
 	}

@@ -24,13 +24,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if !defined(WIN32)
+#if !defined(OMRWINDOWS)
 #include <dirent.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/types.h>
 #include <unistd.h>
-#endif /* !defined(WIN32) */
+#endif /* !defined(OMRWINDOWS) */
 
 #include "ArgParser.hpp"
 #include "CFileWriter.hpp"

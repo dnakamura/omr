@@ -40,11 +40,11 @@
 
 #include <signal.h>
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(OMRWINDOWS)
 /* for getcwd() */
 #include <direct.h>
 #define getcwd _getcwd
-#endif
+#endif /* defined(OMRWINDOWS) */
 
 #include "testHelpers.hpp"
 #include "omrport.h"

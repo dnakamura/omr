@@ -35,9 +35,9 @@
  *
  */
 
-#if !defined(WIN32)
+#if !defined(OMRWINDOWS)
 #include <signal.h>
-#endif
+#endif /* defined(OMRWINDOWS) */
 
 #if defined(J9ZOS390)
 #include "atoe.h"
@@ -54,9 +54,9 @@
 #include "testProcessHelpers.hpp"
 #include "omrport.h"
 
-#if !defined(WIN32) && defined(OMR_PORT_ASYNC_HANDLER)
+#if !defined(OMRWINDOWS) && defined(OMR_PORT_ASYNC_HANDLER)
 #define J9SIGNAL_TEST_RUN_ASYNC_UNIX_TESTS
-#endif
+#endif /* !defined(OMRWINDOWS) && defined(OMR_PORT_ASYNC_HANDLER) */
 
 #define SIG_TEST_SIZE_EXENAME 1024
 
@@ -931,7 +931,7 @@ TEST(PortSigTest, sig_test6)
 		 * to run this test you need to port/unix/omrsignal.c (remove static from declaration of tlsKeyCurrentSignal)
 		 * and add "<export name="tlsKeyCurrentSignal" />" to port/module.xml, to export tlsKeyCurrentSignal.
 		 */
-#if ! defined(WIN32)
+#if !defined(OMRWINDOWS)
 		{
 			extern omrthread_tls_key_t tlsKeyCurrentSignal;
 			int signo = (int)(uintptr_t)omrthread_tls_get(omrthread_self(), tlsKeyCurrentSignal);
@@ -942,7 +942,7 @@ TEST(PortSigTest, sig_test6)
 				outputErrorMessage(PORTTEST_ERROR_ARGS, "currentSignal corrupt -- got: %d expected: %d\n", signo, expectedSigno);
 			}
 		}
-#endif
+#endif /* !defined(OMRWINDOWS) */
 #endif
 
 	}

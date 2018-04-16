@@ -27,12 +27,12 @@
 #include <utility>
 #include <vector>
 
-#if defined(WIN32) || defined(WIN64)
-/* windows.h defines UDATA: Ignore its definition. */
+#if defined(OMRWINDOWS)
+/* windows.h defined uintptr_t.  Ignore its definition */
 #define UDATA UDATA_win_
 #include "dia2.h"
-#undef UDATA /* this is safe because our UDATA is a typedef, not a macro */
-#endif
+#undef UDATA	/* this is safe because our UDATA is a typedef, not a macro */
+#endif /* defined(OMRWINDOWS) */
 
 #include "ddr/ir/ClassUDT.hpp"
 #include "ddr/ir/EnumUDT.hpp"

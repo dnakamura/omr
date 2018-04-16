@@ -35,15 +35,15 @@
 #include <strings.h>
 #endif
 
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 #include <windows.h>
 #include <sys/utime.h>
-#else /* defined(WIN32) */
+#else /* defined(OMRWINDOWS) */
 #include <limits.h>
 #include <unistd.h>
-#endif /* defined(WIN32) */
+#endif /* defined(OMRWINDOWS) */
 
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 #define strdup _strdup
 #define stat _stat
 #define snprintf _snprintf
@@ -55,7 +55,7 @@
 #define OS_ENCODING_MB_FLAGS 0
 #define OS_ENCODING_WC_FLAGS 0
 #define UNICODE_BUFFER_SIZE EsMaxPath
-#else /* defined(WIN32) */
+#else /* defined(OMRWINDOWS) */
 #define PATH_SEP  "/"
 #define dirstat struct stat
 #define PORT_INVALID_FIND_FILE_HANDLE ((intptr_t) 0)
@@ -65,7 +65,7 @@
 /* EsMaxPath was chosen from unix MAXPATHLEN. */
 #define EsMaxPath 	1024
 #endif /* defined(PATH_MAX) */
-#endif /* defined(WIN32) */
+#endif /* defined(OMRWINDOWS) */
 
 typedef enum RCType {
 	RC_OK 		= 0,
@@ -116,7 +116,7 @@ private:
 protected:
 public:
 
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 	/**
 	 * Uses convertFromUTF8 and if the resulting unicode path is longer than the Windows defined MAX_PATH,
 	 * the path is converted to an absolute path and prepended with //?/
@@ -165,7 +165,7 @@ public:
 	 * @return RC_OK on success, RC_FAILED on failure.
 	 */
 	static RCType convertToUTF8(const wchar_t *unicodeString, char **utf8Buffer);
-#endif /* #if defined(WIN32) */
+#endif /* defined(OMRWINDOWS) */
 
 	static RCType omrfile_findfirst(const char *path, char **resultbuf, intptr_t *handle);
 

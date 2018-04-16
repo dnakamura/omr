@@ -24,9 +24,9 @@
 #include <algorithm>
 #include <assert.h>
 #include <comdef.h>
-#if !defined(WIN32)
+#if !defined(OMRWINDOWS)
 #include <inttypes.h>
-#endif
+#endif /* !defined(OMRWINDOWS) */
 #include <stdio.h>
 
 #include "ddr/std/sstream.hpp"

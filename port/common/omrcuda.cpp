@@ -752,7 +752,7 @@ openDriver(OMRPortLibrary *portLibrary)
 	const char *driverLibrary = "libcuda.so";
 #elif defined(OSX)
 	const char *driverLibrary = "libcuda.dylib";
-#elif defined(WIN32)
+#elif defined(OMRWINDOWS)
 	const char *driverLibrary = "nvcuda.dll";
 #endif /* defined(LINUX) */
 	J9CudaGlobalData *globals = &portLibrary->portGlobals->cudaGlobals;
@@ -988,9 +988,9 @@ const J9CudaLibraryDescriptor runtimeLibraries[] = {
 #   define OMRCUDA_LIBRARY_NAME(major, minor) ("libcudart.so." #major "." #minor)
 #elif defined(OSX)
 #   define OMRCUDA_LIBRARY_NAME(major, minor) ("libcudart." #major "." #minor ".dylib")
-#elif defined(WIN32) && defined(OMR_ENV_DATA64)
+#elif defined(OMRWINDOWS) && defined(OMR_ENV_DATA64)
 #   define OMRCUDA_LIBRARY_NAME(major, minor) ("cudart64_" #major #minor ".dll")
-#elif defined(WIN32)
+#elif defined(OMRWINDOWS)
 #   define OMRCUDA_LIBRARY_NAME(major, minor) ("cudart32_" #major #minor ".dll")
 #endif /* defined(LINUX) && defined(OMR_ENV_DATA64) */
 

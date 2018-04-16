@@ -33,8 +33,8 @@ void createThread(omrthread_t *newThread, uintptr_t suspend, omrthread_detachsta
 				  omrthread_entrypoint_t entryProc, void *entryArg);
 intptr_t joinThread(omrthread_t threadToJoin);
 bool handlerIsFunction(sighandler_t handler);
-#if !defined(WIN32)
+#if !defined(OMRWINDOWS)
 bool handlerIsFunction(const struct sigaction *act);
-#endif /* !defined(WIN32) */
+#endif /* !defined(OMRWINDOWS) */
 
 #endif /* OMRSIGTESTHELPERS_H_INCLUDED */

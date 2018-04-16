@@ -30,9 +30,9 @@
  */
 #include <string.h>
 #include <stdio.h>
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 #include <windows.h>
-#endif /* defined(WIN32) */
+#endif /* defined(OMRWINDOWS) */
 
 #include "testHelpers.hpp"
 #include "omrport.h"
@@ -42,7 +42,7 @@
  *
  * Call omrtty_daemonize, then call omrtty_printf/omrtty_vprintf. If we crash or print anything, then the test has failed.
  */
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 TEST(PortTtyTest, tty_daemonize_test)
 {
 	OMRPORT_ACCESS_FROM_OMRPORT(portTestEnv->getPortLibrary());
@@ -90,4 +90,4 @@ TEST(PortTtyTest, tty_daemonize_test)
 
 	reportTestExit(OMRPORTLIB, testName);
 }
-#endif /* defined(WIN32) */
+#endif /* defined(OMRWINDOWS) */

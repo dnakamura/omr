@@ -245,14 +245,14 @@ omrthread_get_mapped_priority(omrthread_prio_t omrthreadPriority);
 
 /* ------------- priority.c ------------ */
 
-#if !defined(WIN32)
+#if !defined(OMRWINDOWS)
 /**
  * @brief
  * @return intptr_t
  */
 intptr_t
 initialize_priority_map(void);
-#endif /* !defined(WIN32) */
+#endif /* !defined(OMRWINDOWS) */
 
 /**
  * @brief

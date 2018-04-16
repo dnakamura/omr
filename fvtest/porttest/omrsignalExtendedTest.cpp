@@ -29,10 +29,10 @@
  *
  */
 
-#if !defined(WIN32)
+#if !defined(OMRWINDOWS)
 #include <signal.h>
 #include <pthread.h>
-#endif
+#endif /* !defined(OMRWINDOWS) */
 
 #include <errno.h>
 #include <string.h>

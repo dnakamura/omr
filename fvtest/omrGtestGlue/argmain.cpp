@@ -28,22 +28,22 @@
  * correctly when it is located in a library.
  */
 
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 #include <windows.h>
-#endif
+#endif /* defined(OMRWINDOWS) */
 #include <stdlib.h>
 #include <string.h>
 
 #if defined(J9ZOS390)
 #include "atoe.h"
-#endif
+#endif /* defined(J9ZOS390) */
 
 /* Define a macro for the name of the main function that takes char args */
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 #define CHARMAIN translated_main
 #else
 #define CHARMAIN main
-#endif
+#endif /* defined(OMRWINDOWS) */
 
 extern "C" int testMain(int argc, char **argv, char **envp);
 
@@ -64,7 +64,7 @@ CHARMAIN(int argc, char **argv, char **envp)
 	return testMain(argc, argv, envp);
 }
 
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 int
 wmain(int argc, wchar_t **argv, wchar_t **envp)
 {
@@ -127,4 +127,4 @@ wmain(int argc, wchar_t **argv, wchar_t **envp)
 
 	return rc;
 }
-#endif /* defined(WIN32) */
+#endif /* defined(OMRWINDOWS) */

@@ -36,7 +36,7 @@ main(int argc, char **argv, char **envp)
 
 TEST(UtilTest, detectVMDirectory)
 {
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 	void *token = NULL;
 	ASSERT_EQ(OMR_ERROR_NONE, OMR_Glue_GetVMDirectoryToken(&token));
 
@@ -52,5 +52,5 @@ TEST(UtilTest, detectVMDirectory)
 		_snwprintf(pathEnd, length, L"\\abc");
 		wprintf(L"Mangled VM Directory: '%s'\n", path);
 	}
-#endif /* defined(WIN32) */
+#endif /* defined(OMRWINDOWS) */
 }

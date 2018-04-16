@@ -34,9 +34,9 @@
 #include "omrthread.h"
 #include "omrport.h"
 
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 #define SPEC_WIN_API
-#endif
+#endif /* defined(OMRWINDOWS) */
 
 #if defined(AIXPPC) || defined(LINUX) || defined(J9ZOS390) || defined(OSX)
 #define SPEC_PTHREAD_API

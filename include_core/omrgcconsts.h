@@ -198,22 +198,22 @@ struct ModronLnrlOptions {
 #if defined(DEBUG)
 #define MMINLINE
 #else /* DEBUG */
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 #define MMINLINE __forceinline
 #elif (__GNUC__ > 3) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
 #define MMINLINE inline __attribute((always_inline))
-#else /* WIN32 */
+#else /* OMRWINDOWS */
 #define MMINLINE inline
-#endif /* WIN32 */
+#endif /* OMRWINDOWS */
 #endif /* DEBUG */
 
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 #define MMINLINE_DEBUG __forceinline
 #elif ((__GNUC__ > 3) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
 #define MMINLINE_DEBUG inline __attribute((always_inline))
-#else /* WIN32 */
+#else /* OMRWINDOWS */
 #define MMINLINE_DEBUG inline
-#endif /* WIN32 */
+#endif /* OMRWINDOWS */
 
 /**
  * Lightweight Non-Reentrant Locks (LWNR) Spinlock Support

@@ -19,9 +19,9 @@
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR LicenseRef-GPL-2.0 WITH Assembly-exception
  *******************************************************************************/
 
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 #include <windows.h>
-#endif
+#endif /* defined(OMRWINDOWS) */
 #if defined(J9ZOS390) || defined(LINUX) || defined(AIXPPC) || defined(OSX)
 #include <pthread.h>
 #if defined(OSX)
@@ -263,7 +263,7 @@ initPrioMap(void)
 }
 #endif /* defined(J9OS_I5) */
 
-#elif defined(WIN32)
+#elif defined(OMRWINDOWS)
 
 void
 initPrioMap(void)

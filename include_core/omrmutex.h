@@ -24,8 +24,8 @@
 
 #include "omrcomp.h"
 
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 #include "win/omrmutex.h"
 #else
 #include "unix/omrmutex.h"
-#endif
+#endif /* defined(OMRWINDOWS) */

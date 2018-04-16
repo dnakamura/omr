@@ -20,13 +20,13 @@
  *******************************************************************************/
 
 #include "gcTestHelpers.hpp"
-#if defined(WIN32) || defined(WIN64)
+#if defined(OMRWINDOWS)
 /* windows.h defined uintptr_t.  Ignore its definition */
 #define UDATA UDATA_win_
 #include <windows.h>
 #undef UDATA	/* this is safe because our UDATA is a typedef, not a macro */
 #include <psapi.h>
-#endif /* defined(WIN32) || defined(WIN64) */
+#endif /* defined(OMRWINDOWS) */
 
 void
 GCTestEnvironment::initParams()
@@ -96,7 +96,7 @@ GCTestEnvironment::GCTestTearDown()
 void
 printMemUsed(const char *where, OMRPortLibrary *portLib)
 {
-#if defined(WIN32) || defined(WIN64)
+#if defined(OMRWINDOWS)
 	OMRPORT_ACCESS_FROM_OMRPORT(portLib);
 	PROCESS_MEMORY_COUNTERS_EX pmc;
 	GetProcessMemoryInfo(GetCurrentProcess(), (PPROCESS_MEMORY_COUNTERS)&pmc, sizeof(pmc));
@@ -129,5 +129,5 @@ printMemUsed(const char *where, OMRPortLibrary *portLib)
 	omrfile_close(fileDescriptor);
 #else
 	/* memory info not supported */
-#endif
+#endif /* defined(OMRWINDOWS) */
 }

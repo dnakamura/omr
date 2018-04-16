@@ -32,12 +32,12 @@
  * The structures defined in this file may be changed without notice.
  */
 
-#if defined(WIN32)
+#if defined(OMRWINDOWS)
 /* pdh.h include windows.h which defined uintptr_t.  Ignore its definition */
 #define UDATA UDATA_win32_
 #include <pdh.h>
 #undef UDATA	/* this is safe because our UDATA is a typedef, not a macro */
-#endif /* defined(WIN32) */
+#endif /* defined(OMRWINDOWS) */
 
 #include "omrcomp.h"
 #include "omragent.h"

@@ -24,12 +24,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#if !defined(WIN32)
+#if !defined(OMRWINDOWS)
 #include <fcntl.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <dirent.h>
-#endif /* !defined(WIN32) */
+#endif /* !defined(OMRWINDOWS) */
 
 #include "DATMerge.hpp"
 #include "ArgParser.hpp"
