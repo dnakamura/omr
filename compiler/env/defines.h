@@ -95,7 +95,7 @@
 #  define HOST_OS OMR_LINUX
 #elif defined(_AIX)
 #  define HOST_OS OMR_AIX
-#elif defined(_WIN32)
+#elif defined(OMRWINDOWS)
 #  define HOST_OS OMR_WINDOWS
 #elif defined(__MVS__)
 #  define HOST_OS OMR_ZOS
