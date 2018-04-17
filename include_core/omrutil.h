@@ -143,7 +143,7 @@ uintptr_t findSmallestPrimeGreaterThanOrEqualTo(uintptr_t number);
  */
 uintptr_t getSupportedBiggestNumberByPrimeNumberHelper(void);
 
-#if defined(OMRWINDOWS) && !defined(WIN32_IBMC)
+#if defined(OMRWINDOWS)
 
 /* ---------------- omrgetdbghelp.c ---------------- */
 
@@ -166,7 +166,7 @@ uintptr_t omrgetdbghelp_getDLL(void);
 */
 void omrgetdbghelp_freeDLL(uintptr_t dbgHelpDLL);
 
-#endif  /* defined(OMRWINDOWS) && !defined(WIN32_IBMC) */
+#endif  /* defined(OMRWINDOWS) */
 
 
 /* ---------------- stricmp.c ---------------- */
