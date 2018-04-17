@@ -19,13 +19,13 @@
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR LicenseRef-GPL-2.0 WITH Assembly-exception
  *******************************************************************************/
 
-#ifdef MS_WINDOWS
+#if defined(OMRWINDOWS)
 #undef BYTE
 #include "windows.h"
 #define PATH_MAX MAXPATHLEN
 #else
 #include <dlfcn.h>
-#endif
+#endif /* defined(OMRWINDOWS) */
 #include <errno.h>
 #include "OMRTestEnv.hpp"
 

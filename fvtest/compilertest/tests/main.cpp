@@ -27,13 +27,13 @@
 #include "gtest/gtest.h"
 #include "OMRTestEnv.hpp"
 
-#ifdef MS_WINDOWS
+#if defined(OMRWINDOWS)
 #undef BYTE
 #include "windows.h"
 #define PATH_MAX MAXPATHLEN
 #else
 #include <dlfcn.h>
-#endif
+#endif /* defined(OMRWINDOWS) */
 
 int main(int argc, char **argv)
    {
