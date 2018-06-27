@@ -104,7 +104,7 @@ int use_fcntl  = 0;       /* Is SETCVTOFF flag supported in fcntl()? */
 
 #define set_SETCVTON()                                               \
 	struct f_cnvrt std_cnvrt;                                        \
-        std_cnvrt.cvtcmd = SESETCVTON;                               \
+        std_cnvrt.cvtcmd = SETCVTON;                                 \
         std_cnvrt.pccsid = 819;   /* 819 = ISO8859-1 */              \
         std_cnvrt.fccsid = 0;                                        \
         /* Turn on autoconversion for this file. */                  \
