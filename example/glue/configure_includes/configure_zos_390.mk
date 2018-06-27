@@ -64,6 +64,7 @@ ifeq (zos_390, $(SPEC))
     --enable-OMR_PORT_CAN_RESERVE_SPECIFIC_ADDRESS
 endif
 
+CONFIGURE_ARGS += --enable-new-ebcdic
 CONFIGURE_ARGS += libprefix=lib exeext= solibext=.so arlibext=.a objext=.o
 
 CONFIGURE_ARGS += 'AS=c89'

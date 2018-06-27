@@ -32,6 +32,9 @@
  * The compiler will find this header file in preference to the system one.
  * ===========================================================================
  */
+#if defined(IBM_ATOE) && defined(OMR_NEW_EBCDIC)
+	#define _AE_BIMODAL
+#endif
 
 #if __TARGET_LIB__ == 0X22080000                                   /*ibm@28725*/
 #include <//'PP.ADLE370.OS39028.SCEEH.H(stdio)'>                   /*ibm@28725*/
@@ -68,18 +71,24 @@
         int        atoe_vprintf   (const char *, va_list);
         int        atoe_vfprintf  (FILE *, const char *, va_list);
         int        atoe_vsprintf  (char *, const char *, va_list); /*ibm@2580*/
-	int        atoe_vsnprintf (char *, size_t, const char *, va_list);
+		int        atoe_vsnprintf (char *, size_t, const char *, va_list);
+
+		FILE *     atoe_new_fopen     (const char*, const char*);
+		int        atoe_new_fprintf   (FILE*, const char*, ...);
+		FILE *     atoe_new_freopen   (const char*, const char*, FILE*);
+		int        atoe_new_vfprintf  (FILE *, const char *, va_list);
 
 		#ifdef __cplusplus
             }
 		#endif
 
+		/* Functions which change /w OMR_NEW_EBCDIC */
 		#undef fopen
 		#undef fprintf
-		#undef fread
 		#undef freopen
-		#undef fwrite
-		#undef fgets
+		#undef vfprintf
+
+		/* Common funcs */
 		#undef gets
 		#undef perror
 		#undef printf
@@ -89,30 +98,43 @@
 		#undef snprintf
 		#undef sscanf                                     /*ibm@2609*/
 		#undef tempnam
-		#undef vfprintf
 		#undef vsprintf                                   /*ibm@2580*/
 		#undef vsnprintf
 
-
-		#define fopen           atoe_fopen
-		#define fprintf         atoe_fprintf
-		#define fread           atoe_fread
-		#define freopen         atoe_freopen
-		#define fwrite          atoe_fwrite
-		#define fgets           atoe_fgets
 		#define gets            atoe_gets
 		#define perror          atoe_perror
 		#define printf          atoe_printf
 		#define putchar         atoe_putchar
 		#define rename          atoe_rename
 		#define sprintf         atoe_sprintf
-        #define snprintf        atoe_snprintf
+		#define snprintf        atoe_snprintf
 		#define sscanf          atoe_sscanf               /*ibm@2609*/
 		#define tempnam         atoe_tempnam
-		#define vfprintf        atoe_vfprintf
 		#define vprintf         atoe_vprintf
 		#define vsprintf        atoe_vsprintf             /*ibm@2580*/
-		#define vsnprintf	atoe_vsnprintf
+		#define vsnprintf       atoe_vsnprintf
+
+		#ifdef OMR_NEW_EBCDIC
+			#define fopen           atoe_new_fopen
+			#define fprintf         atoe_new_fprintf
+			#define freopen         atoe_new_freopen
+			#define vfprintf        atoe_new_vfprintf
+		#else /* OMR_NEW_EBCDIC */
+			#define fopen           atoe_fopen
+			#define fprintf         atoe_fprintf
+			#define freopen         atoe_freopen
+			#define vfprintf        atoe_vfprintf
+
+			/* Functions which are only macro'd when not using OMR_NEW_EBCDIC */
+			#undef fgets
+			#undef fread
+			#undef fwrite
+
+			#define fgets           atoe_fgets
+			#define fread           atoe_fread
+			#define fwrite          atoe_fwrite
+		#endif /* OMR_NEW_EBCDIC */
+
 	#endif
 
 #endif

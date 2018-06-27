@@ -33,6 +33,9 @@
  * The compiler will find this header file in preference to the system one.
  * ===========================================================================
  */
+#if defined(IBM_ATOE) && defined(OMR_NEW_EBCDIC)
+	#define _AE_BIMODAL
+#endif
 
 #if __TARGET_LIB__ == 0X22080000                                   /*ibm@28725*/
 #include <//'PP.ADLE370.OS39028.SCEEH.H(stdlib)'>                  /*ibm@28725*/

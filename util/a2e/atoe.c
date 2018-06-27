@@ -85,6 +85,7 @@ int use_fcntl  = 0;       /* Is SETCVTOFF flag supported in fcntl()? */
 #define MIN_FCNTL_LEVEL  0x41020000  /* This is the lowest version   */
                                      /* of OS that supports the use  */
                                      /* of SETCVTOFF flag in fcntl().*/
+									 /* Equal to z/OS v1.2           */
 
 /* Macros for checking and setting global flags for use of fcntl()   */
 /* and turning autoconversion off.                                   */
@@ -101,12 +102,21 @@ int use_fcntl  = 0;       /* Is SETCVTOFF flag supported in fcntl()? */
         fcntl_init = 1;   /* Turn on global checked flag */          \
       }
 
+#define set_SETCVTON()                                               \
+	struct f_cnvrt std_cnvrt;                                        \
+        std_cnvrt.cvtcmd = SESETCVTON;                               \
+        std_cnvrt.pccsid = 819;   /* 819 = ISO8859-1 */              \
+        std_cnvrt.fccsid = 0;                                        \
+        /* Turn on autoconversion for this file. */                  \
+        fcntl( fd, F_CONTROL_CVT, &std_cnvrt);
+                                                   /*ibm@57265 end*/
+
 #define set_SETCVTOFF()                                              \
 	struct f_cnvrt std_cnvrt;                                    \
         std_cnvrt.cvtcmd = SETCVTOFF;                                \
         std_cnvrt.pccsid = 0;                                        \
         std_cnvrt.fccsid = 0;                                        \
-        /* Turn of autoconversion for this file. */                  \
+        /* Turn off autoconversion for this file. */                 \
         fcntl( fd, F_CONTROL_CVT, &std_cnvrt);
                                                    /*ibm@57265 end*/
 #else
@@ -716,6 +726,43 @@ atoe_fopen(const char *filename, char *mode)
 	return outfp;
 }
 
+
+/**************************************************************************
+ * name        - atoe_new_fopen
+ * description -
+ * parameters  -
+ * returns     -
+ *************************************************************************/
+FILE *
+atoe_new_fopen(const char *filename, char *mode)
+{
+	FILE *outfp;
+	char *f, *m;
+	int  fd = -1;         /* file descriptor */
+
+	Log(1, "Entry: atoe_new_fopen\n");
+
+	//check_fcntl_init();                            /*ibm@57265*/
+
+	f = a2e_string((char *)filename);
+	m = a2e_string(mode);
+	outfp = fopen(f, m);
+
+	/*ibm@57265 start*/
+	if ((outfp != NULL) &&                        /* fopen() ok?    */
+		(use_fcntl)    &&                         /* OS level is ok */
+		((fd = fileno(outfp)) != -1)) {           /* have a file descriptor? */
+		/* set up auto conversion */
+		set_SETCVTON()
+	}
+	/*ibm@57265 end*/
+
+	free(f);
+	free(m);
+
+	return outfp;
+}
+
 /**************************************************************************
  * name        - atoe_freopen
  * description -
@@ -1298,6 +1345,36 @@ atoe_fprintf(FILE *file, const char *ascii_chars, ...)
 	return len;
 }
 
+/**************************************************************************
+ * name        - atoe_new_fprintf
+ * description -
+ * parameters  -
+ * returns     -
+ *************************************************************************/
+int
+atoe_new_fprintf(FILE *file, const char *ascii_chars, ...)
+{
+	va_list args;
+	char buf[BUFLEN];
+	int len;
+
+	va_start(args, ascii_chars);
+
+	len = atoe_vsnprintf(buf, BUFLEN, ascii_chars, args);
+
+	/* Abort if failed... */
+	if (len == -1) {
+		return len;
+	}
+
+#pragma convlit(suspend)
+	len = fprintf(file, "%s", buf);
+#pragma convlit(resume)
+
+	va_end(args);
+
+	return len;
+}
 
 /**************************************************************************
  * name        -
@@ -1430,6 +1507,35 @@ atoe_vprintf(const char *ascii_chars, va_list args)
  *************************************************************************/
 int
 atoe_vfprintf(FILE *file, const char *ascii_chars, va_list args)
+{
+	char buf[BUFLEN];
+	char *ebuf;
+	int len;
+
+	len = atoe_vsnprintf(buf, BUFLEN, ascii_chars, args);
+
+	if (len == -1) {
+		return len;
+	}
+
+	ebuf = a2e(buf, len);
+#pragma convlit(suspend)
+	len = fprintf(file, "%s", ebuf);
+#pragma convlit(resume)
+
+	free(ebuf);
+
+	return len;
+}
+
+/**************************************************************************
+ * name        - atoe_new_vfprintf
+ * description -
+ * parameters  -
+ * returns     -
+ *************************************************************************/
+int
+atoe_new_vfprintf(FILE *file, const char *ascii_chars, va_list args)
 {
 	char buf[BUFLEN];
 	char *ebuf;
