@@ -154,6 +154,12 @@
  */
 #undef OMR_INTERP_SMALL_MONITOR_SLOT
 
+
+/**
+ * Flag to indicate that new style EBCDIC handling code should be used.
+ */
+#undef OMR_NEW_EBCDIC
+
 /**
  * Add support for CUDA
  */

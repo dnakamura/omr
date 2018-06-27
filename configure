@@ -661,6 +661,7 @@ OMR_VALGRIND_MEMCHECK
 OMR_GC_IDLE_HEAP_MANAGER
 VS_CL_PATH
 OMR_DIASDK_HOME
+OMR_NEW_EBCDIC
 OMRTHREAD_LIB_UNIX
 OMRTHREAD_LIB_ZOS
 OMRTHREAD_LIB_WIN32
@@ -888,6 +889,7 @@ enable_OMRTHREAD_LIB_AIX
 enable_OMRTHREAD_LIB_WIN32
 enable_OMRTHREAD_LIB_ZOS
 enable_OMRTHREAD_LIB_UNIX
+enable_OMR_NEW_EBCDIC
 enable_OMR_GC_IDLE_HEAP_MANAGER
 enable_OMR_VALGRIND_MEMCHECK
 '
@@ -1630,6 +1632,7 @@ Optional Features:
   --enable-OMR_ARCH_POWER
   --enable-OMR_ARCH_ARM
   --enable-OMR_ARCH_AARCH64
+
   --enable-OMR_ARCH_X86
   --enable-OMR_ARCH_S390
   --enable-OMR_ENV_DATA64
@@ -1675,6 +1678,8 @@ Optional Features:
 
   --enable-OMRTHREAD_LIB_UNIX
 
+  --enable-OMR_NEW_EBCDIC Whether we are building OMR with new EBCDIC handling
+                          code. (Default: no)
   --enable-OMR_GC_IDLE_HEAP_MANAGER
 
   --enable-OMR_VALGRIND_MEMCHECK
@@ -7092,6 +7097,26 @@ else
 
 
 fi
+
+fi
+
+
+
+# Check whether --enable-OMR_NEW_EBCDIC was given.
+if test "${enable_OMR_NEW_EBCDIC+set}" = set; then :
+  enableval=$enable_OMR_NEW_EBCDIC; if test "x${enableval}" = xyes; then :
+  OMR_NEW_EBCDIC=1
+
+   $as_echo "#define OMR_NEW_EBCDIC 1" >>confdefs.h
+
+else
+  OMR_NEW_EBCDIC=0
+
+
+fi
+else
+  OMR_NEW_EBCDIC=0
+
 
 fi
 

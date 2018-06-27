@@ -507,6 +507,8 @@ OMRCFG_DEFINE_FLAG([OMRTHREAD_LIB_UNIX],[1],
 	)]
 )
 
+OMRCFG_DEFINE_FLAG_OFF([OMR_NEW_EBCDIC], [], [Whether we are building OMR with new EBCDIC handling code. (Default: no)])
+
 AC_ARG_VAR([OMR_DIASDK_HOME],
 	[The directory where the DIA SDK can be found.] (Default: ))
 
