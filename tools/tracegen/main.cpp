@@ -45,10 +45,10 @@ main(int argc, char **argv, char **envp)
 {
 	RCType rc = RC_OK;
 #if defined(J9ZOS390)
-#if __CHARSET_LIB != 1
+#if __CHARSET_LIB == 1
 	/* enable auto conversion */
 	__ae_autoconvert_state(_CVTSTATE_ON);
-#else /* __CHARSET_LIB != 1 */
+#else /* __CHARSET_LIB == 1 */
 	/* Convert EBCDIC to UTF-8 (ASCII) */
 	if (-1 != iconv_init()) {
 		/* translate argv strings to ascii */
@@ -64,7 +64,7 @@ main(int argc, char **argv, char **envp)
 		eprintf("failed to initialize iconv");
 		rc = RC_FAILED;
 	}
-#endif /* __CHARSET_LIB != 1 */
+#endif /* __CHARSET_LIB == 1 */
 #endif /* defined(J9ZOS390) */
 	if (RC_OK == rc) {
 		rc = startTraceGen(argc, argv);
