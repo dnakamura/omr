@@ -380,8 +380,11 @@ HookGen::createFile(char *path, const char *fileName)
 
 	strcpy(buff, path);
 	strcat(buff, fileName);
-
-	FILE *file = fopen(buff, "wb");
+#if defined(J9ZOS390) && (__CHARSET_LIB == 1)
+	FILE *file = fopen(buff, "wt");
+#else
+	FILE *file = fopen(buff, "w");
+#endif
 #if defined(DEBUG)
 	fprintf(stderr, "Opening %s for writing\n", temp);
 #endif /* DEBUG */
