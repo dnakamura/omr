@@ -24,11 +24,11 @@
 #include <string.h>
 
 #if defined(J9ZOS390)
-#if (__CHARSET_LIB == 1)
+#if __CHARSET_LIB == 1
 #include <_Nascii.h>
-#else
+#else /* __CHARSET_LIB == 1 */
 #include "atoe.h"
-#endif
+#endif /* __CHARSET_LIB == 1 */
 #endif /* defined(J9ZOS390) */
 #if defined(OMR_OS_WINDOWS)
 #include <windows.h>
