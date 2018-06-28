@@ -219,7 +219,7 @@ DATMerge::merge(J9TDFOptions *options, const char *fromFileName)
 		Port::omrmem_free((void **)&newToFileName);
 		Port::omrmem_free((void **)&buffer);
 #if defined(J9ZOS390) && (__CHARSET_LIB == 1)
-		toFile = Port::fopen(toFileName, "at")
+		toFile = Port::fopen(toFileName, "at");
 #else
 		toFile = Port::fopen(toFileName, "ab");
 #endif
