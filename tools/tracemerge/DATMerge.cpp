@@ -160,9 +160,11 @@ DATMerge::merge(J9TDFOptions *options, const char *fromFileName)
 		if (NULL == newToFileName || NULL == buffer) {
 			goto failed;
 		}
-
+#if defined(J9ZOS390) && (__CHARSET_LIB == 1)
+		FILE *tmpFile = Port::fopen(newToFileName, "wt");
+#else
 		FILE *tmpFile = Port::fopen(newToFileName, "wb");
-
+#endif
 		/* Copy across the lines for every other component. */
 		rc = toFilereader.init(toFileName);
 		if (RC_OK != rc) {
