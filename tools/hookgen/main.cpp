@@ -24,7 +24,7 @@
 #include <string.h>
 
 #if defined(J9ZOS390)
-#if (__CHARSET_LIB != 1)
+#if (__CHARSET_LIB == 1)
 #include <_Nascii.h>
 #else
 #include "atoe.h"
