@@ -169,7 +169,7 @@ function(masm2gas_asm_files out_var compiler)
 	set(${out_var} "${result}" PARENT_SCOPE)
 endfunction()
 
-function(spp2s_files out_var compiler)
+function(spp2s_files_old out_var compiler)
 	# This peculiar pipeline exists to work around some issues that
 	# are created by the pickiness of the AIX assembler.
 	#
@@ -224,6 +224,18 @@ function(spp2s_files out_var compiler)
 	set(${out_var} "${result}" PARENT_SCOPE)
 endfunction()
 
+function(spp2s_files out_var compiler)
+	foreach(in_f ${ARGN})
+		get_filename_component(extension ${in_f} EXT)
+		if(extension STREQUAL ".spp") # Requires conversion!
+			#TODO this is gcc specific at the moment
+			set_source_files_properties(${in_f} PROPERTIES LANGUAGE ASM)
+			set_property(SOURCE ${in_f}  APPEND_STRING PROPERTY COMPILE_FLAGS " -x assembler-with-cpp")
+
+		endif()
+	endforeach()
+	set(${out_var} ${ARGN} PARENT_SCOPE)
+endfunction()
 
 # Some source files in OMR don't map well into the transforms
 # CMake already knows about. This generates a pipeline of custom commands
