@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 IBM Corp. and others
+ * Copyright (c) 2018, 2018 IBM Corp. and others
  *
  * This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License 2.0 which accompanies this
@@ -19,24 +19,36 @@
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR LicenseRef-GPL-2.0 WITH Assembly-exception
  *******************************************************************************/
 
-#ifndef TR_ILVALUE_INCL
-#define TR_ILVALUE_INCL
+ #ifndef OMR_METHODBUILDERREPLAY_INCL
+ #define OMR_METHODBUILDERREPLAY_INCL
 
-#include "ilgen/OMRIlValue.hpp"
+ #include "ilgen/MethodBuilder.hpp"
 
-namespace TR
-{
-   class IlValue : public OMR::IlValue
-      {
-      public:
-         IlValue(TR::MethodBuilderRecorder *methodBuilder)
-            : OMR::IlValue(methodBuilder)
-            { }
-         IlValue(TR::Node *node, TR::TreeTop *treeTop, TR::Block *block, TR::MethodBuilderRecorder *methodBuilder)
-            : OMR::IlValue(node, treeTop, block, methodBuilder)
-            { }
-      };
+ // Maximum length of _definingLine string (including null terminator)
+ #define MAX_LINE_NUM_LEN 7
 
-} // namespace TR
+ class TR_BitVector;
+ namespace TR { class BytecodeBuilder; }
+ namespace OMR { class VirtualMachineState; }
 
-#endif // !defined(TR_ILVALUE_INCL)
+ namespace OMR
+ {
+
+ class MethodBuilderReplay : public TR::MethodBuilder
+    {
+    public:
+
+    MethodBuilderReplay(TR::TypeDictionary *types, TR::JitBuilderReplay *replay, TR::JitBuilderRecorder *recorder);
+
+    void setReplay(TR::JitBuilderReplay *replay) { _replay = replay; }
+    virtual bool buildIL();
+
+    protected:
+
+    TR::JitBuilderReplay         * _replay;
+
+    };
+
+ } // namespace OMR
+
+ #endif // !defined(OMR_METHODBUILDERREPLAY_INCL)

@@ -25,7 +25,7 @@
 #include <fstream>
 #include <stdarg.h>
 #include <string.h>
-#include "ilgen/IlInjector.hpp"
+#include "ilgen/IlBuilderRecorder.hpp"
 #include "il/ILHelpers.hpp"
 
 #include "ilgen/IlValue.hpp" // must go after IlInjector.hpp or TR_ALLOC isn't cleaned up
@@ -39,6 +39,7 @@ namespace TR { class ResolvedMethodSymbol; }
 namespace TR { class SymbolReference; }
 namespace TR { class SymbolReferenceTable; }
 namespace TR { class VirtualMachineState; }
+class TR_HeapMemory;
 
 namespace TR { class IlType; }
 namespace TR { class TypeDictionary; }
@@ -52,7 +53,7 @@ namespace OMR
 typedef TR::ILOpCodes (*OpCodeMapper)(TR::DataType);
 
 
-class IlBuilder : public TR::IlInjector
+class IlBuilder : public TR::IlBuilderRecorder
    {
 
 protected:
@@ -145,8 +146,7 @@ public:
    friend class OMR::MethodBuilder;
 
    IlBuilder(TR::MethodBuilder *methodBuilder, TR::TypeDictionary *types)
-      : TR::IlInjector(types),
-      _methodBuilder(methodBuilder),
+      : TR::IlBuilderRecorder(methodBuilder, types),
       _sequence(0),
       _sequenceAppender(0),
       _entryBlock(0),
@@ -170,6 +170,8 @@ public:
    virtual TR::MethodBuilder *asMethodBuilder() { return NULL; }
 
    virtual bool isBytecodeBuilder()             { return false; }
+
+   bool shouldCompile();
 
    virtual TR::VirtualMachineState *initialVMState()         { return NULL; }
    virtual TR::VirtualMachineState *vmState()                { return NULL; }
@@ -344,6 +346,7 @@ public:
     */
    TR::IlValue *ComputedCall(const char *name, int32_t numArgs, TR::IlValue **args);
 
+   void genCall(TR::IlValue *returnValue, TR::SymbolReference *methodSymRef, int32_t numArgs, TR::IlValue ** paramValues, bool isDirectCall = true);
    TR::IlValue *genCall(TR::SymbolReference *methodSymRef, int32_t numArgs, TR::IlValue ** paramValues, bool isDirectCall = true);
    void Goto(TR::IlBuilder **dest);
    void Goto(TR::IlBuilder *dest);
@@ -367,6 +370,7 @@ public:
       ForLoop(true, indVar, body, NULL, NULL, initial, iterateWhile, increment);
       }
 
+#if 0
    void ForLoopDown(const char *indVar,
                     TR::IlBuilder **body,
                     TR::IlValue *initial,
@@ -397,8 +401,9 @@ public:
       {
       ForLoop(countsUp, indVar, body, NULL, continueBody, initial, iterateWhile, increment);
       }
-
+#endif
    virtual void WhileDoLoop(const char *exitCondition, TR::IlBuilder **body, TR::IlBuilder **breakBuilder = NULL, TR::IlBuilder **continueBuilder = NULL);
+#if 0
    void WhileDoLoopWithBreak(const char *exitCondition, TR::IlBuilder **body, TR::IlBuilder **breakBuilder)
       {
       WhileDoLoop(exitCondition, body, breakBuilder);
@@ -408,8 +413,10 @@ public:
       {
       WhileDoLoop(exitCondition, body, NULL, continueBuilder);
       }
+#endif
 
    virtual void DoWhileLoop(const char *exitCondition, TR::IlBuilder **body, TR::IlBuilder **breakBuilder = NULL, TR::IlBuilder **continueBuilder = NULL);
+ #if 0
    void DoWhileLoopWithBreak(const char *exitCondition, TR::IlBuilder **body, TR::IlBuilder **breakBuilder)
       {
       DoWhileLoop(exitCondition, body, breakBuilder);
@@ -418,6 +425,7 @@ public:
       {
       DoWhileLoop(exitCondition, body, NULL, continueBuilder);
       }
+#endif
 
    /* @brief creates an AND nest of short-circuited conditions, for each term pass a JBCondition instance */
    void IfAnd(TR::IlBuilder **allTrueBuilder, TR::IlBuilder **anyFalseBuilder, int32_t numTerms, JBCondition **terms);
@@ -481,6 +489,13 @@ public:
                uint32_t numCases,
                JBCase** cases);
 
+   void Switch(const char *selectionVar,
+               TR::IlBuilder **defaultBuilder,
+               uint32_t numCases,
+               int32_t *caseValues,
+               TR::IlBuilder **caseBuilders,
+               bool *caseFallsThrough);
+
    /**
     * @brief Generates a switch-case control flow structure (vararg overload).
     *
@@ -509,13 +524,10 @@ public:
                      TR::IlBuilder **caseBuilder,
                      int32_t caseFallsThrough);
 
+    TR::MethodBuilder * methodBuilder() { return _methodBuilder;}
 
+    void defineSymbol(const char *name, TR::SymbolReference *v);
 protected:
-
-   /**
-    * @brief MethodBuilder parent for this IlBuilder object
-    */
-   TR::MethodBuilder           * _methodBuilder;
 
    /**
     * @brief sequence of TR::Blocks and other TR::IlBuilder objects that should execute when control reaches this IlBuilder
@@ -562,18 +574,25 @@ protected:
     */
    bool                          _isHandler;
 
+   TR::IlBuilder                *self();
+
    virtual bool buildIL() { return true; }
 
+   TR_HeapMemory trHeapMemory();
+
    TR::SymbolReference *lookupSymbol(const char *name);
-   void defineSymbol(const char *name, TR::SymbolReference *v);
    TR::IlValue *newValue(TR::IlType *dt, TR::Node *n=NULL);
    TR::IlValue *newValue(TR::DataType dt, TR::Node *n=NULL);
+   void closeValue(TR::IlValue *v, TR::IlType *dt, TR::Node *n);
+   void closeValue(TR::IlValue *v, TR::DataType dt, TR::Node *n);
    void defineValue(const char *name, TR::IlType *dt);
 
    TR::Node *loadValue(TR::IlValue *v);
    void storeNode(TR::SymbolReference *symRef, TR::Node *v);
    void indirectStoreNode(TR::Node *addr, TR::Node *v);
    TR::IlValue *indirectLoadNode(TR::IlType *dt, TR::Node *addr, bool isVectorLoad=false);
+   void indirectLoadNode(TR::IlValue *returnValue, TR::IlType *dt, TR::Node *addr, bool isVectorLoad = false);
+
 
    TR::Node *zero(TR::DataType dt);
    TR::Node *zero(TR::IlType *dt);
@@ -583,15 +602,22 @@ protected:
    TR::IlValue *unaryOp(TR::ILOpCodes op, TR::IlValue *v);
    void doVectorConversions(TR::Node **leftPtr, TR::Node **rightPtr);
    TR::IlValue *widenIntegerTo32Bits(TR::IlValue *v);
+   void binaryOpFromNodes(TR::ILOpCodes op, TR::IlValue *returnValue, TR::Node *leftNode, TR::Node *rightNode);
    TR::IlValue *binaryOpFromNodes(TR::ILOpCodes op, TR::Node *leftNode, TR::Node *rightNode);
    TR::Node *binaryOpNodeFromNodes(TR::ILOpCodes op, TR::Node *leftNode, TR::Node *rightNode);
+   void binaryOpFromOpMap(OpCodeMapper mapOp, TR::IlValue *returnValue, TR::IlValue *left, TR::IlValue *right);
    TR::IlValue *binaryOpFromOpMap(OpCodeMapper mapOp, TR::IlValue *left, TR::IlValue *right);
+   void binaryOpFromOpCode(TR::ILOpCodes op, TR::IlValue *returnValue, TR::IlValue *left, TR::IlValue *right);
    TR::IlValue *binaryOpFromOpCode(TR::ILOpCodes op, TR::IlValue *left, TR::IlValue *right);
    TR::Node *shiftOpNodeFromNodes(TR::ILOpCodes op, TR::Node *leftNode, TR::Node *rightNode);
+   void shiftOpFromNodes(TR::ILOpCodes op, TR::IlValue *returnValue, TR::Node *leftNode, TR::Node *rightNode);
    TR::IlValue *shiftOpFromNodes(TR::ILOpCodes op, TR::Node *leftNode, TR::Node *rightNode);
+   void shiftOpFromOpMap(OpCodeMapper mapOp, TR::IlValue *returnValue, TR::IlValue *left, TR::IlValue *right);
    TR::IlValue *shiftOpFromOpMap(OpCodeMapper mapOp, TR::IlValue *left, TR::IlValue *right);
    TR::IlValue *compareOp(TR_ComparisonTypes ct, bool needUnsigned, TR::IlValue *left, TR::IlValue *right);
-   TR::IlValue *convertTo(TR::IlType *t, TR::IlValue *v, bool needUnsigned);
+   void compareOp(TR_ComparisonTypes ct, bool needUnsigned, TR::IlValue *returnValue, TR::IlValue *left, TR::IlValue *right);
+
+   void convertTo(TR::IlValue *convertedValue, TR::IlType *t, TR::IlValue *v, bool needUnsigned);
 
    void ifCmpCondition(TR_ComparisonTypes ct, bool isUnsignedCmp, TR::IlValue *left, TR::IlValue *right, TR::Block *target);
    void ifCmpNotEqualZero(TR::IlValue *condition, TR::Block *target);

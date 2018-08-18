@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 IBM Corp. and others
+ * Copyright (c) 2016, 2018 IBM Corp. and others
  *
  * This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License 2.0 which accompanies this
@@ -19,24 +19,25 @@
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR LicenseRef-GPL-2.0 WITH Assembly-exception
  *******************************************************************************/
 
-#ifndef TR_ILVALUE_INCL
-#define TR_ILVALUE_INCL
+#ifndef TR_ILBUILDERRECORDER_INCL
+#define TR_ILBUILDERRECORDER_INCL
 
-#include "ilgen/OMRIlValue.hpp"
+#include "ilgen/OMRIlBuilderRecorder.hpp"
 
 namespace TR
 {
-   class IlValue : public OMR::IlValue
+   class IlBuilderRecorder : public OMR::IlBuilderRecorder
       {
       public:
-         IlValue(TR::MethodBuilderRecorder *methodBuilder)
-            : OMR::IlValue(methodBuilder)
+         IlBuilderRecorder(TR::MethodBuilder *methodBuilder, TR::TypeDictionary *types)
+            : OMR::IlBuilderRecorder(methodBuilder, types)
             { }
-         IlValue(TR::Node *node, TR::TreeTop *treeTop, TR::Block *block, TR::MethodBuilderRecorder *methodBuilder)
-            : OMR::IlValue(node, treeTop, block, methodBuilder)
+
+         IlBuilderRecorder(TR::IlBuilder *source)
+            : OMR::IlBuilderRecorder(source)
             { }
       };
 
 } // namespace TR
 
-#endif // !defined(TR_ILVALUE_INCL)
+#endif // !defined(TR_ILBUILDERRECORDER_INCL)

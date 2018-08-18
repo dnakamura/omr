@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 IBM Corp. and others
+ * Copyright (c) 2016, 2017 IBM Corp. and others
  *
  * This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License 2.0 which accompanies this
@@ -19,24 +19,24 @@
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR LicenseRef-GPL-2.0 WITH Assembly-exception
  *******************************************************************************/
 
-#ifndef TR_ILVALUE_INCL
-#define TR_ILVALUE_INCL
+#include <stdint.h>
+#include <fstream>
 
-#include "ilgen/OMRIlValue.hpp"
+#include "ilgen/JitBuilderRecorderBinaryFile.hpp"
+#include "infra/Assert.hpp"
 
-namespace TR
-{
-   class IlValue : public OMR::IlValue
-      {
-      public:
-         IlValue(TR::MethodBuilderRecorder *methodBuilder)
-            : OMR::IlValue(methodBuilder)
-            { }
-         IlValue(TR::Node *node, TR::TreeTop *treeTop, TR::Block *block, TR::MethodBuilderRecorder *methodBuilder)
-            : OMR::IlValue(node, treeTop, block, methodBuilder)
-            { }
-      };
+OMR::JitBuilderRecorderBinaryFile::JitBuilderRecorderBinaryFile(const TR::MethodBuilderRecorder *mb, const char *fileName)
+   : TR::JitBuilderRecorderBinaryBuffer(mb), _file(fileName, std::fstream::out | std::fstream::app)
+   {
+   }
 
-} // namespace TR
+void
+OMR::JitBuilderRecorderBinaryFile::Close()
+   {
+   end();
+   EndStatement();
 
-#endif // !defined(TR_ILVALUE_INCL)
+   _file.write(reinterpret_cast<const char *>(&_buf[0]), _buf.size());
+
+   _file.close();
+   }

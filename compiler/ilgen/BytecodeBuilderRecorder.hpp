@@ -19,24 +19,21 @@
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR LicenseRef-GPL-2.0 WITH Assembly-exception
  *******************************************************************************/
 
-#ifndef TR_ILVALUE_INCL
-#define TR_ILVALUE_INCL
+#ifndef TR_BYTECODE_BUILDERRECORDER_INCL
+#define TR_BYTECODE_BUILDERRECORDER_INCL
 
-#include "ilgen/OMRIlValue.hpp"
+#include "ilgen/OMRBytecodeBuilderRecorder.hpp"
 
 namespace TR
 {
-   class IlValue : public OMR::IlValue
+   class BytecodeBuilderRecorder : public OMR::BytecodeBuilderRecorder
       {
       public:
-         IlValue(TR::MethodBuilderRecorder *methodBuilder)
-            : OMR::IlValue(methodBuilder)
-            { }
-         IlValue(TR::Node *node, TR::TreeTop *treeTop, TR::Block *block, TR::MethodBuilderRecorder *methodBuilder)
-            : OMR::IlValue(node, treeTop, block, methodBuilder)
+         BytecodeBuilderRecorder(TR::MethodBuilder *methodBuilder, int32_t bcIndex, char *name=NULL)
+            : OMR::BytecodeBuilderRecorder(methodBuilder, bcIndex, name)
             { }
       };
 
 } // namespace TR
 
-#endif // !defined(TR_ILVALUE_INCL)
+#endif // !defined(TR_ILBUILDERRECORDER_INCL)

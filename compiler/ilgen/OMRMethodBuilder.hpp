@@ -25,16 +25,18 @@
 #include <map>
 #include <set>
 #include <fstream>
-#include "ilgen/IlBuilder.hpp"
 #include "env/TypedAllocator.hpp"
+#include "ilgen/MethodBuilderRecorder.hpp"
 
 // Maximum length of _definingLine string (including null terminator)
 #define MAX_LINE_NUM_LEN 7
 
 class TR_BitVector;
+namespace TR { class IlBuilder; }
 namespace TR { class BytecodeBuilder; }
 namespace TR { class ResolvedMethod; }
 namespace TR { class SymbolReference; }
+namespace TR { class JitBuilderRecorder; }
 namespace TR { class VirtualMachineState; }
 
 namespace TR { class SegmentProvider; }
@@ -44,48 +46,29 @@ class TR_Memory;
 namespace OMR
 {
 
-class MethodBuilder : public TR::IlBuilder
+class MethodBuilder : public TR::MethodBuilderRecorder
    {
    public:
    TR_ALLOC(TR_Memory::IlGenerator)
 
-   MethodBuilder(TR::TypeDictionary *types, TR::VirtualMachineState *vmState = NULL);
-   MethodBuilder(TR::MethodBuilder *callerMB, TR::VirtualMachineState *vmState = NULL);
+   MethodBuilder(TR::TypeDictionary *types,  TR::JitBuilderRecorder *recorder, TR::VirtualMachineState *vmState, bool isCompiling = true);
+   MethodBuilder(TR::MethodBuilder *callerMB,  TR::JitBuilderRecorder *recorder, TR::VirtualMachineState *vmState, bool isCompiling = true);
    virtual ~MethodBuilder();
 
    virtual void setupForBuildIL();
 
    virtual bool injectIL();
 
-   /**
-    * @brief returns the next index to be used for new values
-    * @returns the next value index
-    * If this method build is an inlined MethodBuilder, then the answer to
-    * this query is delegated to the caller's MethodBuilder, which means
-    * only the top-level MethodBuilder object assigns value IDs.
-    */
-   int32_t getNextValueID();
-
-   bool usesBytecodeBuilders()                               { return _useBytecodeBuilders; }
-   void setUseBytecodeBuilders()                             { _useBytecodeBuilders = true; }
-
-   void addToAllBytecodeBuildersList(TR::BytecodeBuilder *bcBuilder);
    void addToTreeConnectingWorklist(TR::BytecodeBuilder *builder);
    void addToBlockCountingWorklist(TR::BytecodeBuilder *builder);
 
-   virtual TR::VirtualMachineState *vmState()                { return _vmState; }
-   virtual void setVMState(TR::VirtualMachineState *vmState) { _vmState = vmState; }
-
    virtual bool isMethodBuilder()                            { return true; }
-   virtual TR::MethodBuilder *asMethodBuilder();
-
-   TR::TypeDictionary *typeDictionary()                      { return _types; }
 
    const char *getDefiningFile()                             { return _definingFile; }
    const char *getDefiningLine()                             { return _definingLine; }
 
    const char *getMethodName()                               { return _methodName; }
-   void AllLocalsHaveBeenDefined()                           { _newSymbolsAreTemps = true; }
+   void AllLocalsHaveBeenDefined();
 
    TR::IlType *getReturnType()                               { return _returnType; }
    int32_t getNumParameters()                                { return _numParameters; }
@@ -107,11 +90,11 @@ class MethodBuilder : public TR::IlBuilder
 
    TR::BytecodeBuilder *OrphanBytecodeBuilder(int32_t bcIndex=0, char *name=NULL);
 
-   void AppendBuilder(TR::BytecodeBuilder *bb);
-   void AppendBuilder(TR::IlBuilder *b)    { this->OMR::IlBuilder::AppendBuilder(b); }
+   // we can't use "using" on all platforms yet, so help out the compiler overloading explicitly
+   void AppendBuilder(TR::IlBuilder *b)                     { TR::MethodBuilderRecorder::AppendBuilder(b); }
+   void AppendBuilder(TR::BytecodeBuilder *bcb)             { TR::MethodBuilderRecorder::AppendBuilder(bcb); }
 
-   void DefineFile(const char *file)                         { _definingFile = file; }
-
+   void DefineFile(const char *file);
    void DefineLine(const char *line);
    void DefineLine(int line);
    void DefineName(const char *name);
@@ -143,29 +126,9 @@ class MethodBuilder : public TR::IlBuilder
     */
    virtual bool RequestFunction(const char *name) { return false; }
 
-   /**
-    * @brief append the first bytecode builder object to this method
-    * @param builder the bytecode builder object to add, usually for bytecode index 0
-    * A side effect of this call is that the builder is added to the worklist so that
-    * all other bytecodes can be processed by asking for GetNextBytecodeFromWorklist()
-    */
-   void AppendBytecodeBuilder(TR::BytecodeBuilder *builder);
+   void addToAllBytecodeBuildersList(TR::BytecodeBuilder* bcBuilder);
 
-   /**
-    * @brief add a bytecode builder to the worklist
-    * @param bcBuilder is the bytecode builder whose bytecode index will be added to the worklist
-    */
-   void addBytecodeBuilderToWorklist(TR::BytecodeBuilder* bcBuilder);
-
-   /**
-    * @brief get lowest index bytecode from the worklist
-    * @returns lowest bytecode index or -1 if worklist is empty
-    * It is important to use the worklist because it guarantees no bytecode will be
-    * processed before at least one predecessor bytecode has been processed, which
-    * means there should be a non-NULL VirtualMachineState object on the associated
-    * BytecodeBuilder object.
-    */
-   int32_t GetNextBytecodeFromWorklist();
+   bool isCompiling() {return _isCompiling;}
 
    /**
     * @brief Override this MethodBuilder's inline site index
@@ -237,6 +200,7 @@ class MethodBuilder : public TR::IlBuilder
    TR::MethodBuilder *callerMethodBuilder();
 
    protected:
+   void initMaps();
    virtual uint32_t countBlocks();
    virtual bool connectTrees();
    TR_Memory *trMemory() { return memoryManager._trMemory; }
@@ -275,33 +239,33 @@ class MethodBuilder : public TR::IlBuilder
    typedef std::map<const char *, TR::SymbolReference *, StrComparator, SymbolMapAllocator> SymbolMap;
 
    // This map should only be accessed inside a compilation via lookupSymbol
-   SymbolMap                   _symbols;
+   SymbolMap                 * _symbols;
 
    typedef TR::typed_allocator<std::pair<const char * const, int32_t>, TR::Region &> ParameterMapAllocator;
    typedef std::map<const char *, int32_t, StrComparator, ParameterMapAllocator> ParameterMap;
-   ParameterMap                _parameterSlot;
+   ParameterMap              * _parameterSlot;
 
    typedef TR::typed_allocator<std::pair<const char * const, TR::IlType *>, TR::Region &> SymbolTypeMapAllocator;
    typedef std::map<const char *, TR::IlType *, StrComparator, SymbolTypeMapAllocator> SymbolTypeMap;
-   SymbolTypeMap               _symbolTypes;
+   SymbolTypeMap             * _symbolTypes;
 
    typedef TR::typed_allocator<std::pair<int32_t const, const char *>, TR::Region &> SlotToSymNameMapAllocator;
    typedef std::map<int32_t, const char *, std::less<int32_t>, SlotToSymNameMapAllocator> SlotToSymNameMap;
-   SlotToSymNameMap            _symbolNameFromSlot;
+   SlotToSymNameMap          * _symbolNameFromSlot;
    
    typedef TR::typed_allocator<const char *, TR::Region &> StringSetAllocator;
    typedef std::set<const char *, StrComparator, StringSetAllocator> ArrayIdentifierSet;
 
    // This set acts as an identifier for symbols which correspond to arrays
-   ArrayIdentifierSet          _symbolIsArray;
+   ArrayIdentifierSet        * _symbolIsArray;
 
    typedef TR::typed_allocator<std::pair<const char * const, void *>, TR::Region &> MemoryLocationMapAllocator;
    typedef std::map<const char *, void *, StrComparator, MemoryLocationMapAllocator> MemoryLocationMap;
-   MemoryLocationMap           _memoryLocations;
+   MemoryLocationMap         * _memoryLocations;
 
    typedef TR::typed_allocator<std::pair<const char * const, TR::ResolvedMethod *>, TR::Region &> FunctionMapAllocator;
    typedef std::map<const char *, TR::ResolvedMethod *, StrComparator, FunctionMapAllocator> FunctionMap;
-   FunctionMap                 _functions;
+   FunctionMap               * _functions;
 
    TR::IlType                ** _cachedParameterTypes;
    const char                * _definingFile;
@@ -309,22 +273,17 @@ class MethodBuilder : public TR::IlBuilder
    TR::IlType                * _cachedParameterTypesArray[10];
 
    bool                        _newSymbolsAreTemps;
-   int32_t                     _nextValueID;
 
-   bool                        _useBytecodeBuilders;
+   List<TR::BytecodeBuilder> * _allBytecodeBuilders;
    uint32_t                    _numBlocksBeforeWorklist;
    List<TR::BytecodeBuilder> * _countBlocksWorklist;
    List<TR::BytecodeBuilder> * _connectTreesWorklist;
-   List<TR::BytecodeBuilder> * _allBytecodeBuilders;
-   TR::VirtualMachineState   * _vmState;
-
-   TR_BitVector              * _bytecodeWorklist;
-   TR_BitVector              * _bytecodeHasBeenInWorklist;
 
    int32_t                     _inlineSiteIndex;
    int32_t                     _nextInlineSiteIndex;
    TR::IlBuilder             * _returnBuilder;
    const char                * _returnSymbolName;
+   bool                        _isCompiling;
    };
 
 } // namespace OMR

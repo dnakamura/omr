@@ -26,6 +26,7 @@
 #include "compile/SymbolReferenceTable.hpp"
 #include "compile/Compilation.hpp"
 #include "env/FrontEnd.hpp"
+#include "ilgen/JitBuilderRecorder.hpp"
 #include "ilgen/TypeDictionary.hpp"
 #include "env/Region.hpp"
 #include "env/SystemSegmentProvider.hpp"
@@ -59,6 +60,15 @@ public:
 
    virtual size_t getSize() { return TR::DataType::getSize(_type); }
 
+   virtual void Record(TR::JitBuilderRecorder *recorder)
+      {
+      baseType()->RecordFirstTime(recorder);
+      recorder->BeginStatement(recorder->STATEMENT_PRIMITIVETYPE);
+      recorder->Type(this);
+      recorder->Number((int32_t)(getPrimitiveType()));
+      recorder->EndStatement();
+      }
+
 protected:
    TR::DataType _type;
    };
@@ -90,6 +100,17 @@ public:
 
    FieldInfo *getNext()                          { return _next; }
    void setNext(FieldInfo *next)                 { _next = next; }
+
+   virtual void Record(TR::JitBuilderRecorder *recorder, const TR::IlType *myStruct)
+      {
+      _type->RecordFirstTime(recorder);
+      recorder->BeginStatement(recorder->STATEMENT_DEFINEFIELD);
+      recorder->Type(myStruct);
+      recorder->Type(_type);
+      recorder->String(_name);
+      recorder->Number((int64_t)_offset);
+      recorder->EndStatement();
+      }
 
 //private:
    FieldInfo           * _next;
@@ -130,6 +151,8 @@ public:
 
    void clearSymRefs();
 
+   virtual void Record(TR::JitBuilderRecorder *recorder);
+
 protected:
    FieldInfo * findField(const char *fieldName);
 
@@ -168,6 +191,8 @@ public:
 
    void clearSymRefs();
 
+   virtual void Record(TR::JitBuilderRecorder *recorder);
+
 protected:
    FieldInfo * findField(const char *fieldName);
 
@@ -201,6 +226,15 @@ public:
    virtual TR::DataType getPrimitiveType() { return TR::Address; }
 
    virtual size_t getSize() { return TR::DataType::getSize(TR::Address); }
+
+   virtual void Record(TR::JitBuilderRecorder *recorder)
+      {
+      _baseType->RecordFirstTime(recorder);
+      recorder->BeginStatement(recorder->STATEMENT_POINTERTYPE);
+      recorder->Type(self());
+      recorder->Type(_baseType);
+      recorder->EndStatement();
+      }
 
 protected:
    TR::IlType          * _baseType;
@@ -325,6 +359,21 @@ OMR::StructType::clearSymRefs()
       }
    }
 
+void
+OMR::StructType::Record(TR::JitBuilderRecorder *recorder)
+   {
+   recorder->BeginStatement(recorder->STATEMENT_DEFINESTRUCT);
+   recorder->Type(self());
+   recorder->String(_name);
+   recorder->EndStatement();
+
+   FieldInfo *field = _firstField;
+   while (field)
+      {
+      field->Record(recorder, self());
+      field = field->_next;
+      }
+   }
 
 void
 OMR::UnionType::AddField(const char *name, TR::IlType *typeInfo)
@@ -418,6 +467,21 @@ OMR::UnionType::clearSymRefs()
    _symRefBV.init(4, _trMemory);
    }
 
+void
+OMR::UnionType::Record(TR::JitBuilderRecorder *recorder)
+   {
+   recorder->BeginStatement(recorder->STATEMENT_DEFINEUNION);
+   recorder->Type(self());
+   recorder->String(_name);
+   recorder->EndStatement();
+
+   FieldInfo *field = _firstField;
+   while (field)
+      {
+      field->Record(recorder, self());
+      field = field->_next;
+      }
+   }
 
 // Note: _memoryRegion and the corresponding TR::SegmentProvider and TR::Memory instances are stored as pointers within TypeDictionary
 // in order to avoid increasing the number of header files needed to compile against the JitBuilder library. Because we are storing

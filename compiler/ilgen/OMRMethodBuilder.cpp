@@ -46,6 +46,7 @@
 #include "ilgen/IlInjector.hpp"
 #include "ilgen/IlBuilder.hpp"
 #include "ilgen/MethodBuilder.hpp"
+#include "ilgen/JitBuilderRecorderTextFile.hpp"
 #include "ilgen/BytecodeBuilder.hpp"
 #include "ilgen/TypeDictionary.hpp"
 #include "ilgen/VirtualMachineState.hpp"
@@ -95,74 +96,76 @@ OMR::MethodBuilder::MemoryManager::~MemoryManager()
    ::operator delete(_segmentProvider, TR::Compiler->persistentAllocator());
    }
 
-OMR::MethodBuilder::MethodBuilder(TR::TypeDictionary *types, TR::VirtualMachineState *vmState)
-   : TR::IlBuilder(asMethodBuilder(), types),
+OMR::MethodBuilder::MethodBuilder(TR::TypeDictionary *types, TR::JitBuilderRecorder *recorder, TR::VirtualMachineState *vmState, bool isCompiling)
+   : TR::MethodBuilderRecorder(types, recorder, vmState),
    _methodName("NoName"),
    _returnType(NoType),
    _numParameters(0),
-   _symbols(str_comparator, trMemory()->heapMemoryRegion()),
-   _parameterSlot(str_comparator, trMemory()->heapMemoryRegion()),
-   _symbolTypes(str_comparator, trMemory()->heapMemoryRegion()),
-   _symbolNameFromSlot(std::less<int32_t>(), trMemory()->heapMemoryRegion()),
-   _symbolIsArray(str_comparator, trMemory()->heapMemoryRegion()),
-   _memoryLocations(str_comparator, trMemory()->heapMemoryRegion()),
-   _functions(str_comparator, trMemory()->heapMemoryRegion()),
+   _symbols(0),
+   _parameterSlot(0),
+   _symbolTypes(0),
+   _symbolNameFromSlot(0),
+   _symbolIsArray(0),
+   _memoryLocations(0),
+   _functions(0),
    _cachedParameterTypes(0),
    _definingFile(""),
    _newSymbolsAreTemps(false),
-   _nextValueID(0),
-   _useBytecodeBuilders(false),
+   _allBytecodeBuilders(NULL),
+   _numBlocksBeforeWorklist(0),
    _countBlocksWorklist(0),
-   _connectTreesWorklist(0),
-   _allBytecodeBuilders(0),
-   _vmState(vmState),
-   _bytecodeWorklist(NULL),
-   _bytecodeHasBeenInWorklist(NULL),
+  _connectTreesWorklist(0),
+  //TODO DEVIN: should these members be moved into the recorder?
    _inlineSiteIndex(-1),
    _nextInlineSiteIndex(0),
    _returnBuilder(NULL),
-   _returnSymbolName(NULL)
+   _returnSymbolName(NULL),
+   _isCompiling(isCompiling)
    {
    _definingLine[0] = '\0';
+   initMaps();
    }
 
 // used when inlining: 
-OMR::MethodBuilder::MethodBuilder(TR::MethodBuilder *callerMB, TR::VirtualMachineState *vmState)
-   : TR::IlBuilder(asMethodBuilder(), callerMB->typeDictionary()),
+//TODO DEVIN: need to figure out how to do this
+#if 0
+OMR::MethodBuilder::MethodBuilder(TR::MethodBuilder *callerMB, TR::JitBuilderRecorder *recorder, TR::VirtualMachineState *vmState)
+   : TR::MethodBuilderRecorder(types, recorder, vmState),
    _methodName("NoName"),
    _returnType(NoType),
    _numParameters(0),
-   _symbols(str_comparator, trMemory()->heapMemoryRegion()),
-   _parameterSlot(str_comparator, trMemory()->heapMemoryRegion()),
-   _symbolTypes(str_comparator, trMemory()->heapMemoryRegion()),
-   _symbolNameFromSlot(std::less<int32_t>(), trMemory()->heapMemoryRegion()),
-   _symbolIsArray(str_comparator, trMemory()->heapMemoryRegion()),
-   _memoryLocations(str_comparator, trMemory()->heapMemoryRegion()),
-   _functions(str_comparator, trMemory()->heapMemoryRegion()),
+   _symbols(0),
+   _parameterSlot(0),
+   _symbolTypes(0),
+   _symbolNameFromSlot(0),
+   _symbolIsArray(0),
+   _memoryLocations(0),
+   _functions(0),
    _cachedParameterTypes(0),
    _definingFile(""),
    _newSymbolsAreTemps(false),
-   _nextValueID(0),
-   _useBytecodeBuilders(false),
+   _allBytecodeBuilders(NULL),
+   _numBlocksBeforeWorklist(0),
    _countBlocksWorklist(0),
    _connectTreesWorklist(0),
-   _allBytecodeBuilders(0),
-   _vmState(vmState),
-   _bytecodeWorklist(NULL),
-   _bytecodeHasBeenInWorklist(NULL),
+  //TODO: DEVIN should these params be moved to recorder?
    _inlineSiteIndex(callerMB->getNextInlineSiteIndex()),
    _nextInlineSiteIndex(0),
    _returnBuilder(NULL),
    _returnSymbolName(NULL)
    {
    _definingLine[0] = '\0';
+   //TODO DEVIN should call initMaps()?
    initialize(callerMB->_details, callerMB->_methodSymbol, callerMB->_fe, callerMB->_symRefTab);
    }
+#endif
 
 OMR::MethodBuilder::~MethodBuilder()
    {
    // Cleanup allocations in _memoryRegion *before* its destroyed in
    // the MethodBuilder::MemoryManager destructor
+   //TODO DEVIN
+   #if 0
    _symbols.clear();
    _parameterSlot.clear();
    _symbolTypes.clear();
@@ -170,23 +173,15 @@ OMR::MethodBuilder::~MethodBuilder()
    _symbolIsArray.clear();
    _memoryLocations.clear();
    _functions.clear();
-   }
+   #endif
 
-TR::MethodBuilder *
-OMR::MethodBuilder::asMethodBuilder()
-   {
-   return static_cast<TR::MethodBuilder *>(this);
-   }
-
-int32_t
-OMR::MethodBuilder::getNextValueID()
-   {
-   TR::MethodBuilder *caller = callerMethodBuilder();
-   if (caller)
-      // let top most method assign value IDs
-      return caller->getNextValueID();
-
-   return _nextValueID++;
+   delete _symbols;
+   delete _parameterSlot;
+   delete _symbolTypes;
+   delete _symbolNameFromSlot;
+   delete _symbolIsArray;
+   delete _memoryLocations;
+   delete _functions;
    }
 
 int32_t
@@ -206,6 +201,19 @@ OMR::MethodBuilder::callerMethodBuilder()
    if (_returnBuilder == NULL)
       return NULL;
    return _returnBuilder->_methodBuilder;
+   }
+
+void
+OMR::MethodBuilder::initMaps()
+   {
+   //TODO DEVIN: should use different allocators? Also this leaks memory
+   _symbols = new SymbolMap(str_comparator, *memoryManager._memoryRegion);
+   _parameterSlot = new ParameterMap(str_comparator, *memoryManager._memoryRegion);
+   _symbolTypes = new SymbolTypeMap(str_comparator, *memoryManager._memoryRegion);
+   _symbolNameFromSlot = new SlotToSymNameMap(std::less<int32_t>(), *memoryManager._memoryRegion);
+   _symbolIsArray = new ArrayIdentifierSet(str_comparator, *memoryManager._memoryRegion);
+   _memoryLocations = new MemoryLocationMap(str_comparator, *memoryManager._memoryRegion);
+   _functions = new FunctionMap(str_comparator, *memoryManager._memoryRegion);
    }
 
 void
@@ -233,6 +241,9 @@ bool
 OMR::MethodBuilder::injectIL()
    {
    bool rc = IlBuilder::injectIL();
+   if (recorder())
+      recorder()->Close();
+   setRecorder(NULL);
    return rc;
    }
 
@@ -381,19 +392,19 @@ OMR::MethodBuilder::symbolDefined(const char *name)
    // be called in a MethodBuilder contructor. In contrast, ::DefineSymbol
    // which inserts into _symbols, can only be called from within a MethodBuilder's
    // ::buildIL() method ).
-   return _symbolTypes.find(name) != _symbolTypes.end();
+   return _symbolTypes->find(name) != _symbolTypes->end();
    }
 
 void
 OMR::MethodBuilder::defineSymbol(const char *name, TR::SymbolReference *symRef)
    {
-   TR_ASSERT_FATAL(_symbols.find(name) == _symbols.end(), "Symbol '%s' already defined", name);
+   TR_ASSERT_FATAL(_symbols->find(name) == _symbols->end(), "Symbol '%s' already defined", name);
 
-   _symbols.insert(std::make_pair(name, symRef));
-   _symbolNameFromSlot.insert(std::make_pair(symRef->getCPIndex(), name));
+   _symbols->insert(std::make_pair(name, symRef));
+   _symbolNameFromSlot->insert(std::make_pair(symRef->getCPIndex(), name));
    
    TR::IlType *type = typeDictionary()->PrimitiveType(symRef->getSymbol()->getDataType());
-   _symbolTypes.insert(std::make_pair(name, type));
+   _symbolTypes->insert(std::make_pair(name, type));
 
    if (!_newSymbolsAreTemps)
       _methodSymbol->setFirstJitTempIndex(_methodSymbol->getTempIndex());
@@ -416,23 +427,23 @@ OMR::MethodBuilder::lookupSymbol(const char *name)
    {
    TR::SymbolReference *symRef;
 
-   SymbolMap::iterator symbolsIterator = _symbols.find(name);
-   if (symbolsIterator != _symbols.end())  // Found
+   SymbolMap::iterator symbolsIterator = _symbols->find(name);
+   if (symbolsIterator != _symbols->end())  // Found
       {
       symRef = symbolsIterator->second;
       return symRef;
       }
 
-   SymbolTypeMap::iterator symTypesIterator =  _symbolTypes.find(name);
+   SymbolTypeMap::iterator symTypesIterator =  _symbolTypes->find(name);
 
-   TR_ASSERT_FATAL(symTypesIterator != _symbolTypes.end(), "Symbol '%s' doesn't exist", name);
+   TR_ASSERT_FATAL(symTypesIterator != _symbolTypes->end(), "Symbol '%s' doesn't exist", name);
 
    TR::IlType *symbolType = symTypesIterator->second;
    TR::DataType primitiveType = symbolType->getPrimitiveType();
 
-   ParameterMap::iterator paramSlotsIterator = _parameterSlot.find(name);
+   ParameterMap::iterator paramSlotsIterator = _parameterSlot->find(name);
    // if this MethodBuilder is inlined, even parameters should just be temps
-   if (_inlineSiteIndex == -1 && paramSlotsIterator != _parameterSlot.end())
+   if (_inlineSiteIndex == -1 && paramSlotsIterator != _parameterSlot->end())
       {
       int32_t slot = paramSlotsIterator->second;
       symRef = symRefTab()->findOrCreateAutoSymbol(_methodSymbol,
@@ -445,16 +456,16 @@ OMR::MethodBuilder::lookupSymbol(const char *name)
       symRef = symRefTab()->createTemporary(_methodSymbol, primitiveType);
       const char *adjustedName = adjustNameForInlinedSite(name); 
       symRef->getSymbol()->getAutoSymbol()->setName(adjustedName);
-      _symbolNameFromSlot.insert(std::make_pair(symRef->getCPIndex(), name));
+      _symbolNameFromSlot->insert(std::make_pair(symRef->getCPIndex(), name));
 
       // also do the symbol name mapping in caller so references to parameters can be shown in logs
       TR::MethodBuilder *callerMB = callerMethodBuilder();
       if (callerMB)
-         callerMB->_symbolNameFromSlot.insert(std::make_pair(symRef->getCPIndex(), name));
+         callerMB->_symbolNameFromSlot->insert(std::make_pair(symRef->getCPIndex(), name));
       }
    symRef->getSymbol()->setNotCollected();
 
-   _symbols.insert(std::make_pair(name, symRef));
+   _symbols->insert(std::make_pair(name, symRef));
 
    return symRef;
    }
@@ -462,9 +473,9 @@ OMR::MethodBuilder::lookupSymbol(const char *name)
 TR::ResolvedMethod *
 OMR::MethodBuilder::lookupFunction(const char *name)
    {
-   FunctionMap::iterator it = _functions.find(name);
+   FunctionMap::iterator it = _functions->find(name);
 
-   if (it == _functions.end())  // Not found
+   if (it == _functions->end())  // Not found
       {
       size_t len = strlen(name);
       if (len == strlen(_methodName) && strncmp(_methodName, name, len) == 0)
@@ -479,7 +490,14 @@ OMR::MethodBuilder::lookupFunction(const char *name)
 bool
 OMR::MethodBuilder::isSymbolAnArray(const char *name)
    {
-   return _symbolIsArray.find(name) != _symbolIsArray.end();
+   return _symbolIsArray->find(name) != _symbolIsArray->end();
+   }
+
+void
+OMR::MethodBuilder::AllLocalsHaveBeenDefined()
+   {
+   TR::MethodBuilderRecorder::AllLocalsHaveBeenDefined();
+   _newSymbolsAreTemps = true;
    }
 
 TR::BytecodeBuilder *
@@ -492,72 +510,101 @@ OMR::MethodBuilder::OrphanBytecodeBuilder(int32_t bcIndex, char *name)
    }
 
 void
-OMR::MethodBuilder::AppendBuilder(TR::BytecodeBuilder *bb)
+OMR::MethodBuilder::DefineFile(const char * file)
    {
-   this->OMR::IlBuilder::AppendBuilder(bb);
-   if (_vmState)
-      bb->propagateVMState(_vmState);
-   addBytecodeBuilderToWorklist(bb);
+   TR::MethodBuilderRecorder::DefineFile(file);
+   if(isCompiling())
+      {
+      _definingFile = file;
+      }
    }
 
 void
 OMR::MethodBuilder::DefineLine(const char *line)
    {
-   snprintf(_definingLine, MAX_LINE_NUM_LEN * sizeof(char), "%s", line);
+   TR::MethodBuilderRecorder::DefineLine(line);
+   if(isCompiling())
+      {
+      snprintf(_definingLine, MAX_LINE_NUM_LEN * sizeof(char), "%s", line);
+      }
    }
 
 void
 OMR::MethodBuilder::DefineLine(int line)
    {
-   snprintf(_definingLine, MAX_LINE_NUM_LEN * sizeof(char), "%d", line);
+   TR::MethodBuilderRecorder::DefineLine(line);
+   if(isCompiling())
+      {
+      snprintf(_definingLine, MAX_LINE_NUM_LEN * sizeof(char), "%d", line);
+      }
    }
 
 void
 OMR::MethodBuilder::DefineName(const char *name)
    {
-   _methodName = name;
+   TR::MethodBuilderRecorder::DefineName(name);
+   if(isCompiling())
+      {
+      _methodName = name;
+      }
    }
 
 void
 OMR::MethodBuilder::DefineLocal(const char *name, TR::IlType *dt)
    {
-   TR_ASSERT_FATAL(_symbolTypes.find(name) == _symbolTypes.end(), "Symbol '%s' already defined", name);
-   _symbolTypes.insert(std::make_pair(name, dt));
+   TR_ASSERT_FATAL(_symbolTypes->find(name) == _symbolTypes->end(), "Symbol '%s' already defined", name);
+
+   TR::MethodBuilderRecorder::DefineLocal(name, dt);
+   _symbolTypes->insert(std::make_pair(name, dt));
    }
 
 void
 OMR::MethodBuilder::DefineMemory(const char *name, TR::IlType *dt, void *location)
    {
-   TR_ASSERT_FATAL(_memoryLocations.find(name) == _memoryLocations.end(), "Memory '%s' already defined", name);
+   TR_ASSERT_FATAL(_memoryLocations->find(name) == _memoryLocations->end(), "Memory '%s' already defined", name);
 
-   _symbolTypes.insert(std::make_pair(name, dt));
-   _memoryLocations.insert(std::make_pair(name, location));
+   TR::MethodBuilderRecorder::DefineMemory(name, dt, location);
+   _symbolTypes->insert(std::make_pair(name, dt));
+   _memoryLocations->insert(std::make_pair(name, location));
    }
 
 void
 OMR::MethodBuilder::DefineParameter(const char *name, TR::IlType *dt)
    {
-   TR_ASSERT_FATAL(_parameterSlot.find(name) == _parameterSlot.end(), "Parameter '%s' already defined", name);
+   TR::MethodBuilderRecorder::DefineParameter(name, dt);
+   if(isCompiling())
+      {
+      TR_ASSERT_FATAL(_parameterSlot->find(name) == _parameterSlot->end(), "Parameter '%s' already defined", name);
 
-   _parameterSlot.insert(std::make_pair(name, _numParameters));
-   _symbolNameFromSlot.insert(std::make_pair(_numParameters, name));
-   _symbolTypes.insert(std::make_pair(name, dt));
+   
+      _parameterSlot->insert(std::make_pair(name, _numParameters));
+      _symbolNameFromSlot->insert(std::make_pair(_numParameters, name));
+      _symbolTypes->insert(std::make_pair(name, dt));
 
-   _numParameters++;
+      _numParameters++;
+      }
    }
 
 void
 OMR::MethodBuilder::DefineArrayParameter(const char *name, TR::IlType *elementType)
    {
+   TR::MethodBuilderRecorder::DefineArrayParameter(name, elementType);
+   TR::JitBuilderRecorder *savedRecorder = clearRecorder();
+
    DefineParameter(name, elementType);
 
-   _symbolIsArray.insert(name);
+   restoreRecorder(savedRecorder);
+   _symbolIsArray->insert(name);
    }
 
 void
 OMR::MethodBuilder::DefineReturnType(TR::IlType *dt)
    {
-   _returnType = dt;
+   TR::MethodBuilderRecorder::DefineReturnType(dt);
+   if(isCompiling())
+      {
+        _returnType = dt;
+      }
    }
 
 void
@@ -569,6 +616,7 @@ OMR::MethodBuilder::DefineFunction(const char* const name,
                               int32_t          numParms,
                               ...)
    {
+   // should use JIT persistent allocation
    TR::IlType **parmTypes = (TR::IlType **) malloc(numParms * sizeof(TR::IlType *));
    va_list parms;
    va_start(parms, numParms);
@@ -589,8 +637,8 @@ OMR::MethodBuilder::DefineFunction(const char* const name,
                               TR::IlType     * returnType,
                               int32_t          numParms,
                               TR::IlType     ** parmTypes)
-   {   
-   TR_ASSERT_FATAL(_functions.find(name) == _functions.end(), "Function '%s' already defined", name);
+   {
+   TR::MethodBuilderRecorder::DefineFunction(name, fileName, lineNumber, entryPoint, returnType, numParms, parmTypes);
    TR::ResolvedMethod *method = new (trMemory()->heapMemoryRegion()) TR::ResolvedMethod(
                                                                         (char*)fileName,
                                                                         (char*)lineNumber,
@@ -601,7 +649,7 @@ OMR::MethodBuilder::DefineFunction(const char* const name,
                                                                         entryPoint,
                                                                         0);
 
-   _functions.insert(std::make_pair(name, method));
+   _functions->insert(std::make_pair(name, method));
    }
 
 const char *
@@ -619,8 +667,8 @@ OMR::MethodBuilder::getSymbolName(int32_t slot)
    if (slot == -1)
       return "Unknown";
 
-   SlotToSymNameMap::iterator it = _symbolNameFromSlot.find(slot);
-   TR_ASSERT_FATAL(it != _symbolNameFromSlot.end(), "No symbol found in slot %d", slot);
+   SlotToSymNameMap::iterator it = _symbolNameFromSlot->find(slot);
+   TR_ASSERT_FATAL(it != _symbolNameFromSlot->end(), "No symbol found in slot %d", slot);
 
    const char *symbolName = it->second;
    return symbolName;
@@ -636,12 +684,12 @@ OMR::MethodBuilder::getParameterTypes()
    TR::IlType **paramTypesArray = _cachedParameterTypesArray;
    for (int32_t p=0;p < _numParameters;p++)
       {
-      SlotToSymNameMap::iterator symNamesIterator = _symbolNameFromSlot.find(p);
-      TR_ASSERT_FATAL(symNamesIterator != _symbolNameFromSlot.end(), "No symbol found in slot %d", p);
+      SlotToSymNameMap::iterator symNamesIterator = _symbolNameFromSlot->find(p);
+      TR_ASSERT_FATAL(symNamesIterator != _symbolNameFromSlot->end(), "No symbol found in slot %d", p);
       const char *name = symNamesIterator->second;
 
-      std::map<const char *, TR::IlType *, StrComparator>::iterator symTypesIterator = _symbolTypes.find(name);
-      TR_ASSERT_FATAL(symTypesIterator != _symbolTypes.end(), "No matching symbol type for parameter '%s'", name);
+      std::map<const char *, TR::IlType *, StrComparator>::iterator symTypesIterator = _symbolTypes->find(name);
+      TR_ASSERT_FATAL(symTypesIterator != _symbolTypes->end(), "No matching symbol type for parameter '%s'", name);
       paramTypesArray[p] = symTypesIterator->second;
       }
 
@@ -676,41 +724,4 @@ OMR::MethodBuilder::addToAllBytecodeBuildersList(TR::BytecodeBuilder* bcBuilder)
       setUseBytecodeBuilders();
       }
    _allBytecodeBuilders->add(bcBuilder);
-   }
-
-void
-OMR::MethodBuilder::AppendBytecodeBuilder(TR::BytecodeBuilder *builder)
-   {
-   IlBuilder::AppendBuilder(builder);
-   
-   }
-
-void
-OMR::MethodBuilder::addBytecodeBuilderToWorklist(TR::BytecodeBuilder *builder)
-   {
-   if (_bytecodeWorklist == NULL)
-      {
-      _bytecodeWorklist = new (comp()->trHeapMemory()) TR_BitVector(32, comp()->trMemory());
-      _bytecodeHasBeenInWorklist = new (comp()->trHeapMemory()) TR_BitVector(32, comp()->trMemory());
-      }
-
-   int32_t b_bci = builder->bcIndex();
-   if (!_bytecodeHasBeenInWorklist->get(b_bci))
-      {
-      _bytecodeWorklist->set(b_bci);
-      _bytecodeHasBeenInWorklist->set(b_bci);
-      }
-   }
-
-int32_t
-OMR::MethodBuilder::GetNextBytecodeFromWorklist()
-   {
-   if (_bytecodeWorklist == NULL || _bytecodeWorklist->isEmpty())
-      return -1;
-
-   TR_BitVectorIterator it(*_bytecodeWorklist);
-   int32_t bci=it.getFirstElement();
-   if (bci > -1)
-      _bytecodeWorklist->reset(bci);
-   return bci;
    }

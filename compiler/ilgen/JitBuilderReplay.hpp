@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 IBM Corp. and others
+ * Copyright (c) 2018, 2018 IBM Corp. and others
  *
  * This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License 2.0 which accompanies this
@@ -19,24 +19,23 @@
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR LicenseRef-GPL-2.0 WITH Assembly-exception
  *******************************************************************************/
 
-#ifndef TR_ILVALUE_INCL
-#define TR_ILVALUE_INCL
+ #ifndef TR_JITBUILDERREPLAY_INCL
+ #define TR_JITBUILDERREPLAY_INCL
 
-#include "ilgen/OMRIlValue.hpp"
+ #include "ilgen/OMRJitBuilderReplay.hpp"
 
-namespace TR
-{
-   class IlValue : public OMR::IlValue
-      {
-      public:
-         IlValue(TR::MethodBuilderRecorder *methodBuilder)
-            : OMR::IlValue(methodBuilder)
-            { }
-         IlValue(TR::Node *node, TR::TreeTop *treeTop, TR::Block *block, TR::MethodBuilderRecorder *methodBuilder)
-            : OMR::IlValue(node, treeTop, block, methodBuilder)
-            { }
-      };
+ namespace TR
+ {
+    class JitBuilderReplay : public OMR::JitBuilderReplay
+       {
+       public:
+          JitBuilderReplay()
+             : OMR::JitBuilderReplay()
+             { }
+          virtual ~JitBuilderReplay()
+             { }
+       };
 
-} // namespace TR
+ } // namespace TR
 
-#endif // !defined(TR_ILVALUE_INCL)
+ #endif // !defined(TR_JITBUILDERREPLAY_INCL)

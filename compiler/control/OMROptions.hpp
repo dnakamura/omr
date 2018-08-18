@@ -2252,7 +2252,7 @@ protected:
    //
    char                       *_logFileName;
    char                       *_suffixLogsFormat;
-   TR::FILE *                      _logFile;
+   TR::FILE *                  _logFile;
 
 
    char                       *_optFileName;
@@ -2260,6 +2260,7 @@ protected:
    int32_t                     _customStrategySize; // In elements, including endOpts terminator
 
    TR::SimpleRegex *           _traceForCodeMining;
+
    // Optimization levels
    //
    int32_t                     _optLevel;
