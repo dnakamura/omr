@@ -156,6 +156,8 @@ if(OMR_JITBUILDER)
 	add_subdirectory(jitbuilder)
 endif(OMR_JITBUILDER)
 
+add_subdirectory(imperium)
+
 # This should come last to ensure dependencies
 # are defined
 if(OMR_FVTEST)
