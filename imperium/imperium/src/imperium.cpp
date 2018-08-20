@@ -114,7 +114,7 @@
       #endif      
       }
 
-  void ClientChannel::requestCompileSync(char * fileName, uint8_t ** entry, TR::MethodBuilder *mb) 
+  void ClientChannel::requestCompileSync(char * fileName, uint8_t ** entry, TR::MethodBuilder *mb)
      {
         ClientContext codeCacheContext;
         ServerResponse reply;
@@ -147,6 +147,13 @@
 
         Status status = _stub->CompileMethod(&codeCacheContext, request, &reply);
         
+        if(!status.ok())
+        {
+          #ifdef DEBUG
+          std::cerr << "imperium: Error while trying during network request:\n\t" << status.error_message() << std::endl;
+          #endif
+          return;
+        }
         auto fe = JitBuilder::FrontEnd::instance();
         auto codeCacheManager = fe->codeCacheManager();
         auto codeCache = codeCacheManager.getFirstCodeCache();
