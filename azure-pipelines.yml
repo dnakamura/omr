@@ -15,3 +15,20 @@ steps:
     cmake -C ../cmake/caches/Travis.cmake ..
     make
   displayName: 'make'
+- script: |
+    cd build
+    mkdir test_results
+    #TEST_RESULT_DIR=$PWD/test_results
+    export GTEST_OUTPUT="xml:$PWD/test_results/"
+    ctest -V
+  displayName: 'test'
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit' # Options: JUnit, NUnit, VSTest, xUnit
+    testResultsFiles: 'build/test_results/*.xml'
+    #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
+    #mergeTestResults: false # Optional
+    #testRunTitle: # Optional
+    #buildPlatform: # Optional
+    #buildConfiguration: # Optional
+    #publishRunAttachments: true # Optional
