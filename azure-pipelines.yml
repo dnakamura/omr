@@ -7,6 +7,6 @@ steps:
 - script: |
     mkdir build
     cd build
-    cmake -C ../cmake/caches/Travis.cmake
+    cmake -C ../cmake/caches/Travis.cmake ..
     make
   displayName: 'make'
