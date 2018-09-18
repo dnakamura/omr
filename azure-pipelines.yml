@@ -1,0 +1,12 @@
+# C/C++ with GCC
+
+pool:
+  vmImage: 'Ubuntu 16.04'
+
+steps:
+- script: |
+    mkdir build
+    cd build
+    cmake -C ../cmake/caches/Travis.cmake
+    make
+  displayName: 'make'
