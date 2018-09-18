@@ -22,6 +22,7 @@ steps:
     export GTEST_OUTPUT="xml:$PWD/test_results/"
     ctest -V
   displayName: 'test'
+  continueOnError: true
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit' # Options: JUnit, NUnit, VSTest, xUnit
