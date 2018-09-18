@@ -5,6 +5,7 @@ pool:
 
 steps:
 - script: |
+    apt-get install libnuma-dev bison libdwarf-dev libelf-dev
     mkdir build
     cd build
     cmake -C ../cmake/caches/Travis.cmake ..
