@@ -29,6 +29,9 @@ compiler:
 sudo: false
 cache: ccache # https://docs.travis-ci.com/user/caching/
 dist: trusty
+branches:
+  exept:
+    - azure-pipelines
 addons:
   apt:
     sources:
