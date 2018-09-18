@@ -1,11 +1,15 @@
 # C/C++ with GCC
+resources:
+  containers:
+  - container: dev
+    image: devin122/build_test
 
 pool:
   vmImage: 'Ubuntu 16.04'
+container: dev
 
 steps:
 - script: |
-    sudo apt-get install libnuma-dev bison libdwarf-dev libelf-dev
     mkdir build
     cd build
     cmake -C ../cmake/caches/Travis.cmake ..
