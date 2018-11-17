@@ -313,6 +313,8 @@ if(OMR_ENHANCED_WARNINGS)
 	target_compile_options(j9thr_obj PRIVATE ${OMR_ENHANCED_WARNING_FLAG})
 endif()
 
+target_enable_ddr(j9thr_obj "${OMR_DDR_SET}")
+
 add_library(j9thrstatic STATIC
 	$<TARGET_OBJECTS:j9thr_obj>
 )
@@ -329,4 +331,3 @@ target_link_libraries(j9thrstatic
 		omrutil
 		${OMR_PLATFORM_THREAD_LIBRARY}
 )
-

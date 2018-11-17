@@ -44,6 +44,8 @@ target_compile_definitions(j9hook_obj
 		$<TARGET_PROPERTY:omr_base,INTERFACE_COMPILE_DEFINITIONS>
 )
 
+target_enable_ddr(j9hook_obj "${OMR_DDR_SET}")
+
 add_library(j9hookstatic STATIC
 	$<TARGET_OBJECTS:j9hook_obj>
 )

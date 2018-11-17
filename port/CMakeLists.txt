@@ -359,6 +359,8 @@ if(OMR_ENHANCED_WARNINGS)
 	target_compile_options(omrport_obj PRIVATE ${OMR_ENHANCED_WARNING_FLAG})
 endif()
 
+target_enable_ddr(omrport_obj "${OMR_DDR_SET}")
+
 target_link_libraries(omrport
 	PUBLIC
 		omr_base
