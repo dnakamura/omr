@@ -37,3 +37,4 @@ target_include_directories(omr_ddr_base
 
 add_subdirectory(lib)
 add_subdirectory(tools)
+add_subdirectory(test)
