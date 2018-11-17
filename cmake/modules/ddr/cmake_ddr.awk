@@ -1,9 +1,9 @@
 function get_basename(){
 	n = split(FILENAME, array, "/")
 	split(array[n], array, ".")
-	#//return toupper(array[1])
-	return array[1]
-	
+
+	#capitalize the first letter
+	return toupper(substr(array[1], 1, 1)) substr(array[1], 2)
 }
 
 function set_default_namespaces() {
@@ -77,7 +77,7 @@ function define_value_macro(macro_name) {
 		print "MACRO_"macro_name, macro_name
 		print "#endif"
 	}
-	
+
 	if(add_flags){
 		write_flag_defined(macro_name);
 	}
@@ -94,7 +94,6 @@ function begin_file(filename){
 }
 
 BEGIN{
-	#print "DDRFILE_BEGIN"
 	macro_name = "";
 	idx = 0;
 	add_values = 0;
@@ -105,7 +104,7 @@ BEGIN{
 }
 
 END {
-	print "DDRFILE_END" FILENAME
+	print "DDRFILE_END " FILENAME
 }
 
 NR == 1 {
@@ -113,8 +112,6 @@ NR == 1 {
 }
 	
 
-
-#NR == 1 { get_basename()}
 /@ddr_options: *valuesonly/ { add_values = 1; add_flags = 0}
 /@ddr_options: *buildflagsonly/ { add_values = 0; add_flags = 1;}
 /@ddr_namespace: *(default|map_to_type=)/ { add_values = 1; add_flags = 0; }
@@ -135,13 +132,11 @@ function dump_array(arr){
 {
 	# replace tabs with spaces, and cut multiple spaces
 	sub(/[ \t]+/, " ")
-	
+
 	#clean up any space between '#' and define
 	sub(/^ ?# +define/, "#define")
 	
 }
-
-#{print "================================"}
 
 /^ ?# ?define / {
 
