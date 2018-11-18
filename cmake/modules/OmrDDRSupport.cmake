@@ -38,6 +38,7 @@ function(target_enable_ddr tgt)
         COMMAND ${CMAKE_COMMAND} --build ${DDR_BIN_DIR}
     )
     
+    set_target_properties(${tgt} PROPERTIES DDR_MACRO_LIST ${DDR_BIN_DIR}/macro_list)
 endfunction(target_enable_ddr)
 
 

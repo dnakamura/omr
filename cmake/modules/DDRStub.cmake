@@ -26,23 +26,26 @@ foreach(input_file IN LISTS input_list)
         message(FATAL_ERROR "duplicate source")
     endif()
     list(APPEND processed_files ${file_name})
-    set(i_file ${CMAKE_CURRENT_BINARY_DIR}/${file_name}.stub.c)
+    set(stub_file ${CMAKE_CURRENT_BINARY_DIR}/${file_name}.stub.c)
     set(annt_file ${CMAKE_CURRENT_BINARY_DIR}/${file_name}.annt)
 
 
 
     add_custom_command(
-        OUTPUT ${i_file}
-        DEPENDS ${abs_file}
-        COMMAND ${CMAKE_COMMAND} -DAWK_SCRIPT=${DDR_SUPPORT_DIR}/cmake_ddr.awk -Dinput_file=${abs_file} -Doutput_file=${i_file} -P ${DDR_SUPPORT_DIR}/AnnotateHeader.cmake
+        OUTPUT ${stub_file}
+        DEPENDS
+            ${abs_file}
+            ${DDR_SUPPORT_DIR}/cmake_ddr.awk
+            ${DDR_SUPPORT_DIR}/GenerateStub.cmake
+        COMMAND ${CMAKE_COMMAND} -DAWK_SCRIPT=${DDR_SUPPORT_DIR}/cmake_ddr.awk -Dinput_file=${abs_file} -Doutput_file=${stub_file} -P ${DDR_SUPPORT_DIR}/GenerateStub.cmake
     )
 
     add_custom_command(
         OUTPUT ${annt_file}
-        DEPENDS ${i_file}
+        DEPENDS ${stub_file}
         COMMAND 
-            @DDR_PREPROCESSOR_COMMAND@ ${i_file} #|
-            #awk "/^DDRFILE_BEGIN /,/^DDRFILE_END /{print \"@\" $0}"
+            @DDR_PREPROCESSOR_COMMAND@ ${stub_file} |
+            awk "/^\$/{next} /^DDRFILE_BEGIN /,/^DDRFILE_END /{print \"@\" $0}"
              > ${annt_file}
         VERBATIM
         #COMMAND ${DDR_PREPROCESSOR_COMMAND} ${i_file} > ${annt_file}
@@ -53,7 +56,13 @@ foreach(input_file IN LISTS input_list)
     list(APPEND annt_files ${annt_file})
 endforeach()
 
+add_custom_command(
+    OUTPUT macro_list
+    DEPENDS ${annt_files}
+    COMMAND cat ${annt_files} > macro_list
+
+)
 add_custom_target(dummygen ALL
     DEPENDS
-    ${annt_files}
+    macro_list
 )
