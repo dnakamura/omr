@@ -23,6 +23,7 @@
 
 set -evx
 
+git status --ignored 
 time make -f run_configure.mk OMRGLUE=./example/glue SPEC=${SPEC} PLATFORM=${PLATFORM} HAS_AUTOCONF=1 distclean all
 if test "x$RUN_LINT" = "xyes"; then
   llvm-config --version
