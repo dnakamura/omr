@@ -51,13 +51,13 @@ function(target_enable_ddr tgt ddr_set)
     endif()
 
     set(DDR_BIN_DIR "${target_bin_dir}/${tgt}_ddr")
-    set(DDR_SOURCES_LIST ${DDR_BIN_DIR}/input.list)
+    set(DDR_SOURCES_LIST ${DDR_BIN_DIR}/sources_list)
     set(DDR_SUPPORT_DIR ${OMR_MODULES_DIR}/ddr)
     set(DDR_PROJECT_NAME ${tgt}_ddr)
+    set(DDR_MACRO_LIST "${DDR_BIN_DIR}/macro_list")
     
 
     set(DDR_PREPROCESSOR_COMMAND "gcc -xc -E")
-
     file(GENERATE OUTPUT ${DDR_SOURCES_LIST} CONTENT "$<JOIN:$<TARGET_PROPERTY:${tgt},DDR_HEADERS>,\n>\n$<JOIN:$<TARGET_PROPERTY:${tgt},SOURCES>,\n>\n")
 
     configure_file(${OMR_MODULES_DIR}/DDRStub.cmake ${DDR_BIN_DIR}/CMakeLists.txt @ONLY)
