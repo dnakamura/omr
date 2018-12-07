@@ -12,9 +12,9 @@ function(target_enable_ddr tgt)
     omr_assert(FATAL_ERROR TEST TARGET ${tgt} MESSAGE "target_enable_ddr called on non-existant target ${tgt}")
 
     get_target_property(target_bin_dir ${tgt} BINARY_DIR)
-    set(DDR_BIN_DIR ${target_bin_dir}/${tgt}_ddr)
     get_target_property(DDR_SOURCE_DIR ${tgt} SOURCE_DIR)
 
+    set(DDR_BIN_DIR "${target_bin_dir}/${tgt}_ddr")
     set(DDR_SOURCES_LIST ${DDR_BIN_DIR}/input.list)
     set(DDR_SUPPORT_DIR ${OMR_MODULES_DIR}/ddr)
     set(DDR_PROJECT_NAME ${tgt}_ddr)
