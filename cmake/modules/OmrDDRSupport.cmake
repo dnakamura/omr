@@ -78,7 +78,7 @@ function(target_enable_ddr tgt ddr_set)
 
     add_dependencies(${DDR_SET_TARGET} "${tgt}_ddrgen")
     set_property(TARGET ${DDR_SET_TARGET} APPEND PROPERTY DDR_MACRO_INPUTS ${DDR_MACRO_LIST})
-    if(target_type MATCHES "SHARED_LIBRARY|EXECTUABLE")
+    if(target_type MATCHES "SHARED_LIBRARY|EXECUTABLE")
         #TODO this doesnt handle pdbs
         set_property(TARGET ${DDR_SET_TARGET} APPEND PROPERTY DDR_DEBUG_INPUTS "$<TARGET_FILE:${tgt}>")
     endif()
