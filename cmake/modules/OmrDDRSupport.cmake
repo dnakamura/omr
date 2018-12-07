@@ -37,11 +37,18 @@ function(make_ddr_set ddr_set)
     )
 endfunction(make_ddr_set)
 
-function(target_enable_ddr tgt)
+function(target_enable_ddr tgt ddr_set)
+    set(DDR_SET_TARGET "${ddr_set}_ddr")
     omr_assert(FATAL_ERROR TEST TARGET ${tgt} MESSAGE "target_enable_ddr called on non-existant target ${tgt}")
+    omr_assert(FATAL_ERROR TEST TARGET "${DDR_SET_TARGET}" MESSAGE "target_enable_ddr called on non-existant ddr_set ${ddr_set}")
 
     get_target_property(target_bin_dir ${tgt} BINARY_DIR)
     get_target_property(DDR_SOURCE_DIR ${tgt} SOURCE_DIR)
+    get_target_property(target_type ${tgt} TYPE)
+
+    if(target_type MATCHES "INTERFACE_LIBRARY|OBJECT_LIBRARY")
+        message(FATAL_ERROR "Cannot call enable_ddr on interface or object libraries")
+    endif()
 
     set(DDR_BIN_DIR "${target_bin_dir}/${tgt}_ddr")
     set(DDR_SOURCES_LIST ${DDR_BIN_DIR}/input.list)
@@ -67,8 +74,13 @@ function(target_enable_ddr tgt)
         COMMAND ${CMAKE_COMMAND} --build ${DDR_BIN_DIR}
     )
     
-    set_target_properties(${tgt} PROPERTIES DDR_MACRO_LIST ${DDR_BIN_DIR}/macro_list)
+    set_target_properties(${tgt} PROPERTIES DDR_MACRO_LIST ${DDR_MACRO_LIST})
+
+    add_dependencies(${DDR_SET_TARGET} "${tgt}_ddrgen")
+    set_property(TARGET ${DDR_SET_TARGET} APPEND PROPERTY DDR_MACRO_INPUTS ${DDR_MACRO_LIST})
+    if(target_type MATCHES "SHARED_LIBRARY|EXECTUABLE")
+        #TODO this doesnt handle pdbs
+        set_property(TARGET ${DDR_SET_TARGET} APPEND PROPERTY DDR_DEBUG_INPUTS "$<TARGET_FILE:${tgt}>")
+    endif()
+
 endfunction(target_enable_ddr)
-
-
-
