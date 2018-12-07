@@ -18,7 +18,8 @@ function(make_ddr_set ddr_set)
 
 
     file(GENERATE OUTPUT ${DDR_MACRO_INPUTS_FILE} CONTENT "$<JOIN:$<TARGET_PROPERTY:${DDR_TARGET_NAME},DDR_MACRO_INPUTS>,\n>\n")
-    file(GENERATE OUTPUT ${DDR_DEBUG_INPUTS_FILE} CONTENT "$<JOIN:$<TARGET_PROPERTY:${DDR_TARGET_NAME},DDR_DEBUG_INPUTS>,\n>\n")
+    #TODO $<GENEX_EVAL:...> actually requires a fairly recent version of cmake. Need to figure out an alternate method
+    file(GENERATE OUTPUT ${DDR_DEBUG_INPUTS_FILE} CONTENT "$<JOIN:$<GENEX_EVAL:$<TARGET_PROPERTY:${DDR_TARGET_NAME},DDR_DEBUG_INPUTS>>,\n>\n")
 
     file(READ ${OMR_MODULES_DIR}/ddr/DDRSetStub.cmake.in cmakelist_template)
     string(CONFIGURE "${cmakelist_template}" cmakelist_template @ONLY)
