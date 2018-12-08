@@ -19,9 +19,7 @@
 # SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR LicenseRef-GPL-2.0 WITH Assembly-exception
 #############################################################################
 
-message(STATUS "DBG1 in='${input_file}'")
 execute_process(COMMAND grep -lE "@ddr_(namespace|options):" ${input_file} RESULT_VARIABLE rc)
-message(STATUS "DBG2")
 if(rc)
     #input didnt have any ddr directives, so just dump an empty file
     file(WRITE ${output_file} "")
