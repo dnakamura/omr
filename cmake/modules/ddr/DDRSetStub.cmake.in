@@ -1,0 +1,36 @@
+
+cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
+
+project(dummy VERSION 1.0 LANGUAGES NONE)
+set(DDRGEN_EXECUTABLE "$<TARGET_FILE:omr_ddrgen>")
+set(DDR_MACRO_INPUTS_FILE "@DDR_MACRO_INPUTS_FILE@")
+set(DDR_DEBUG_INPUTS_FILE "@DDR_DEBUG_INPUTS_FILE@")
+
+
+set(MERGED_MACRO_LIST "${CMAKE_CURRENT_BINARY_DIR}/macro_list")
+
+#parse our dependencies lists
+file(STRINGS ${DDR_MACRO_INPUTS_FILE} macro_inputs)
+file(STRINGS ${DDR_DEBUG_INPUTS_FILE} debug_inputs)
+
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS  ${DDR_MACRO_INPUTS_FILE} ${DDR_DEBUG_INPUTS_FILE})
+
+add_custom_command(
+    OUTPUT ${MERGED_MACRO_LIST}
+    DEPENDS ${macro_inputs}
+    COMMAND cat ${macro_inputs} > ${MERGED_MACRO_LIST}
+)
+
+add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/blob.dat
+
+    COMMAND ${DDRGEN_EXECUTABLE} -e --macrolist ${MERGED_MACRO_LIST} --blob blob.dat --superset superset.out ${debug_inputs}
+    DEPENDS ${MERGED_MACRO_LIST}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+add_custom_target(ddrgen ALL
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/blob.dat
+)
+#set(DDR_GEN_I_CMD "@DDR_GEN_I_CMD@")
+
