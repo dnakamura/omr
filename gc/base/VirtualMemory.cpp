@@ -295,7 +295,7 @@ MM_VirtualMemory::setNumaAffinity(uintptr_t numaNode, void* address, uintptr_t b
 		 */
 		Assert_MM_true(((uintptr_t)address + byteAmountPageAligned) <= ((uintptr_t)_heapBase + _reserveSize));
 
-		didSetAffinity = (0 == omrvmem_numa_set_affinity(numaNode, address, byteAmountPageAligned, &_identifier));
+		dibdSetAffinity = (0 == omrvmem_numa_set_affinity(numaNode, address, byteAmountPageAligned, &_identifier));
 	}
 	return didSetAffinity;
 }

@@ -1577,7 +1577,10 @@ thread_wrapper(WRAPPER_ARG arg)
 		 * and it assuming the initial affinity that the process had (if reverting to that affinity isn't possible on the platform,
 		 * the call is supposed to do nothing).
 		 */
-		omrthread_numa_set_node_affinity_nolock(thread, affinity, affinityCount, 0);
+
+		if (0 == lib->flags & J9THREAD_LIB_FLAG_DISABLE_DEFAULT_AFFINITY){
+			omrthread_numa_set_node_affinity_nolock(thread, affinity, affinityCount, 0);
+		}
 	}
 #endif /* OMR_PORT_NUMA_SUPPORT */
 	THREAD_UNLOCK(thread);
