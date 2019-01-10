@@ -29,6 +29,10 @@ set(_OMR_DDR_SUPPORT 1)
 set(OMR_MODULES_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 function(make_ddr_set ddr_set)
+    # if DDR is not enabled, just skip
+    if(NOT OMR_DDR)
+      return()
+    endif()
     set(DDR_TARGET_NAME "${ddr_set}_ddr")
     set(DDR_BIN_DIR ${CMAKE_CURRENT_BINARY_DIR}/${DDR_TARGET_NAME})
     set(DDR_MACRO_INPUTS_FILE "${DDR_BIN_DIR}/macros.list")
@@ -60,6 +64,11 @@ function(make_ddr_set ddr_set)
 endfunction(make_ddr_set)
 
 function(target_enable_ddr tgt ddr_set)
+    # if DDR is not enabled, just skip
+    if(NOT OMR_DDR)
+        return()
+    endif()
+
     set(DDR_SET_TARGET "${ddr_set}_ddr")
     omr_assert(FATAL_ERROR TEST TARGET ${tgt} MESSAGE "target_enable_ddr called on non-existant target ${tgt}")
     omr_assert(FATAL_ERROR TEST TARGET "${DDR_SET_TARGET}" MESSAGE "target_enable_ddr called on non-existant ddr_set ${ddr_set}")
