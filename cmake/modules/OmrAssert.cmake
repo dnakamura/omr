@@ -52,8 +52,9 @@ function(omr_assert)
 		string(REPLACE ";" " " omr_assert_MESSAGE "${omr_assert_TEST}")
 	endif()
 
-	message(STATUS "DEBUG contion = '${omr_assert_TEST}'")
+	
 	if(NOT(${omr_assert_TEST}))
+		message(STATUS "DEBUG contion = '${omr_assert_TEST}'")
 		message(${mode} "Assertion failed: ${omr_assert_MESSAGE}")
 	endif()
 endfunction()
