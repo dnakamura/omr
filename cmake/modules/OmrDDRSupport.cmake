@@ -34,7 +34,7 @@ function(make_ddr_set ddr_set)
       return()
     endif()
     set(DDR_TARGET_NAME "${ddr_set}_ddr")
-    set(DDR_BIN_DIR ${CMAKE_CURRENT_BINARY_DIR}/${DDR_TARGET_NAME})
+    set(DDR_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/${DDR_TARGET_NAME}-$<CONFIG>")
     set(DDR_MACRO_INPUTS_FILE "${DDR_BIN_DIR}/macros.list")
     set(DDR_DEBUG_INPUTS_FILE "${DDR_BIN_DIR}/debug.list")
 
@@ -43,7 +43,7 @@ function(make_ddr_set ddr_set)
 
 
     file(GENERATE OUTPUT ${DDR_MACRO_INPUTS_FILE} CONTENT "$<JOIN:$<TARGET_PROPERTY:${DDR_TARGET_NAME},DDR_MACRO_INPUTS>,\n>\n")
-    #TODO $<GENEX_EVAL:...> actually requires a fairly recent version of cmake. Need to figure out an alternate method
+    #TODO $<GENEX_EVAL:...> actually requires a fairly recent version of cmake (3.12). Need to figure out an alternate method
     file(GENERATE OUTPUT ${DDR_DEBUG_INPUTS_FILE} CONTENT "$<JOIN:$<GENEX_EVAL:$<TARGET_PROPERTY:${DDR_TARGET_NAME},DDR_DEBUG_INPUTS>>,\n>\n")
 
     file(READ ${OMR_MODULES_DIR}/ddr/DDRSetStub.cmake.in cmakelist_template)
@@ -52,14 +52,14 @@ function(make_ddr_set ddr_set)
 
     add_custom_command(
         OUTPUT ${DDR_BIN_DIR}/config.stamp
-        COMMAND ${CMAKE_COMMAND} .
+        COMMAND ${CMAKE_COMMAND}  "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}" .
         COMMAND ${CMAKE_COMMAND} -E touch config.stamp
         WORKING_DIRECTORY ${DDR_BIN_DIR}
     )
 
     add_custom_target(${DDR_TARGET_NAME}
         DEPENDS ${DDR_BIN_DIR}/config.stamp
-        COMMAND ${CMAKE_COMMAND} --build ${DDR_BIN_DIR}
+        COMMAND ${CMAKE_COMMAND} --build ${DDR_BIN_DIR} --config $<CONFIG>
     )
 endfunction(make_ddr_set)
 
