@@ -30,7 +30,8 @@ set(OMR_MODULES_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 function(make_ddr_set ddr_set)
     # if DDR is not enabled, just skip
-    if(NOT OMR_DDR)
+    # Also skip if we are on windows since it is unsupported at the moment
+    if((OMR_HOST_OS STREQUAL "win") OR (NOT OMR_DDR))
       return()
     endif()
     set(DDR_TARGET_NAME "${ddr_set}_ddr")
@@ -64,8 +65,8 @@ function(make_ddr_set ddr_set)
 endfunction(make_ddr_set)
 
 function(target_enable_ddr tgt ddr_set)
-    # if DDR is not enabled, just skip
-    if(NOT OMR_DDR)
+    # Also skip if we are on windows since it is unsupported at the moment
+    if((OMR_HOST_OS STREQUAL "win") OR (NOT OMR_DDR))
         return()
     endif()
 
