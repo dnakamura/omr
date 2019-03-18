@@ -153,6 +153,9 @@ set(OMR_THR_THREE_TIER_LOCKING OFF CACHE BOOL "TODO: Document")
 set(OMR_THR_CUSTOM_SPIN_OPTIONS OFF CACHE BOOL "TODO: Document")
 set(OMR_THR_SPIN_WAKE_CONTROL OFF CACHE BOOL "TODO: Document")
 set(OMR_THR_YIELD_ALG OFF CACHE BOOL "TODO: Document")
+if(OMR_THR_YIELD_ALG)
+	omr_assert(FATAL_ERROR TEST OMR_HOST_OS MATCHES "linux|aix|osx" MESSAGE "OMR_THR_YIELD_ALG is not supported on this OS")
+endif(OMR_THR_YIELD_ALG)
 #TODO set to disabled. Stuff fails to compile when its on
 set(OMR_THR_TRACING OFF CACHE BOOL "TODO: Document")
 
