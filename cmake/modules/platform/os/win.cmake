@@ -36,3 +36,6 @@ list(APPEND OMR_PLATFORM_DEFINITIONS
 	-D_WIN32_WINNT=0x0601
 	-DWINVER=0x0601
 )
+
+# find the message compiler
+find_program(CMAKE_MC_COMPILER mc)
