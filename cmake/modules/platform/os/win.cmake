@@ -38,4 +38,4 @@ list(APPEND OMR_PLATFORM_DEFINITIONS
 )
 
 # find the message compiler
-find_program(CMAKE_MC_COMPILER mc)
+find_program(CMAKE_MC_COMPILER mc.exe)
