@@ -34,7 +34,12 @@ target_link_libraries(omr_ddrgen
 	omr_ddr_ir
 	omr_ddr_macros
 	omr_ddr_scanner
-	${OMR_PORT_LIB}
+
+	# Note: we need to link against OMR internal thread/port libs
+	# *NOT* upstream OMR_(PORT|THREAD)_LIB, as ddrgen uses internal
+	# functions which may not be exposed by consuming project
+	j9thrstatic
+	omrport
 )
 
 if(OMRPORT_OMRSIG_SUPPORT)
