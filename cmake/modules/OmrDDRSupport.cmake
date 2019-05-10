@@ -72,7 +72,7 @@ function(make_ddr_set ddr_set)
 
 	# Note: DDR sets have themselves as targets to process
 	# This is so that you can process misc headers which dont logicly belong to any other target
-	target_enable_ddr(${ddr_set})
+	target_enable_ddr_new(${ddr_set})
 	set_property(TARGET "${ddr_set}" APPEND PROPERTY DDR_TARGETS "${ddr_set}")
 
 	file(READ ${OMR_MODULES_DIR}/ddr/DDRSetStub.cmake.in cmakelist_template)
