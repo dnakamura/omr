@@ -116,8 +116,6 @@ function(target_enable_ddr tgt)
 		message(FATAL_ERROR "Cannot call enable_ddr on interface libraries")
 	endif()
 
-	get_property(DDR_BIN_DIR TARGET "${DDR_SET_TARGET}" PROPERTY DDR_BIN_DIR)
-
 	if(opt_EARLY_SOURCE_EVAL)
 		set(source_property "DDR_EVAL_SOURCE")
 		get_target_property(sources "${tgt}" "SOURCES")
