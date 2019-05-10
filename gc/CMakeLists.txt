@@ -320,6 +320,7 @@ if(OMR_GC_SEGREGATED_HEAP)
 			base/segregated/SweepSchemeSegregated.cpp
 			base/segregated/WorkPacketsSegregated.cpp
 	)
+	set_property(TARGET omrgc APPEND PROPERTY DDR_HEADERS base/segregated/RegionPoolSegregated.hpp)
 endif()
 
 if(OMR_GC_VLHGC)
@@ -374,6 +375,17 @@ target_link_libraries(omrgc
 )
 target_enable_ddr(omrgc EARLY_SOURCE_EVAL)
 ddr_set_add_targets(omrddr omrgc)
+# Manually add things for DDRGen to scan
+set_property(TARGET omrgc APPEND PROPERTY DDR_HEADERS
+	base/HeapMap.hpp
+	base/MemorySubSpaceRegionIterator.hpp
+	base/ModronAssertions.h
+	base/modronbase.h
+	include/omrmodroncore.h
+	${omr_SOURCE_DIR}/include_core/omrgcconsts.h
+	${CMAKE_CURRENT_BINARY_DIR}/mmprivatehook.h
+	${omr_BINARY_DIR}/mmomrhook.h
+)
 
 set_target_properties(omrgc omrgc_hookgen omrgc_tracegen PROPERTIES FOLDER gc)
 

@@ -166,6 +166,9 @@ target_include_directories(omrutil_obj PUBLIC $<TARGET_PROPERTY:${OMR_UTIL_GLUE_
 
 target_enable_ddr(omrutil_obj)
 ddr_set_add_targets(omrddr omrutil_obj)
+set_property(TARGET omrutil_obj APPEND PROPERTY DDR_HEADERS
+	${omr_SOURCE_DIR}/include_core/omrutil.h
+)
 
 add_library(omrutil STATIC
 	$<TARGET_OBJECTS:omrutil_obj>

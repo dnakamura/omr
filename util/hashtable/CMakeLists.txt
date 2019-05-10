@@ -60,3 +60,6 @@ set_property(TARGET j9hashtable PROPERTY FOLDER util)
 
 target_enable_ddr(j9hashtable)
 ddr_set_add_targets(omrddr j9hashtable)
+set_property(TARGET j9hashtable APPEND PROPERTY DDR_HEADERS
+	${omr_SOURCE_DIR}/include_core/omrhashtable.h
+)

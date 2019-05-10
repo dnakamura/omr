@@ -51,6 +51,9 @@ omr_add_exports(j9hook_obj
 
 target_enable_ddr(j9hook_obj)
 ddr_set_add_targets(omrddr j9hook_obj)
+set_property(TARGET j9hook_obj APPEND PROPERTY DDR_HEADERS
+	${omr_SOURCE_DIR}/include_core/omrhookable.h
+)
 
 add_library(j9hookstatic STATIC
 	$<TARGET_OBJECTS:j9hook_obj>
