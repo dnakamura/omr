@@ -110,6 +110,7 @@ function begin_file(filename){
 	current_file = filename
 	add_values = 0;
 	add_flags = 0;
+	set_default_namespaces();
 }
 
 BEGIN{
