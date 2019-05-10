@@ -45,4 +45,8 @@ endif()
 
 set_property(TARGET j9pool PROPERTY FOLDER util)
 
-target_enable_ddr(j9pool "${OMR_DDR_SET}")
+# Don't bother scanning sources, all DDR info is in headers
+target_enable_ddr(j9pool omrddr NO_SOURCE_EVAL)
+set_property(TARGET j9pool APPEND PROPERTY DDR_HEADERS
+	${omr_SOURCE_DIR}/include_core/j9pool.h
+)

@@ -47,7 +47,13 @@ target_link_libraries(omrtrace
 		omrutil
 )
 
-target_enable_ddr(omrtrace "${OMR_DDR_SET}")
+target_enable_ddr(omrtrace omrddr NO_SOURCE_EVAL)
+set_property(TARGET omrtrace APPEND PROPERTY DDR_HEADERS
+	${omr_SOURCE_DIR}/include_core/omrtrace.h
+	${omr_SOURCE_DIR}/include_core/ute_core.h
+	${omr_SOURCE_DIR}/include_core/ute_dataformat.h
+	${omr_SOURCE_DIR}/include_core/ute_module.h
+)
 
 #TODO: check if following makefile fragment still required:
 #ifeq (gcc,$(OMR_TOOLCHAIN))
