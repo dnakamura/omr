@@ -142,12 +142,13 @@ NR == 1 {
 {
 	# replace tabs with spaces, and cut multiple spaces
 	sub(/[ \t]+/, " ")
-	#clean up any space between '#' and define
+	# clean up any space between '#' and define
 	sub(/^ ?# +define/, "#define")
-
+	# Normalize #undefs, ie remove excess spaces, and possible leading '/*'
+	sub(/^ ?(\/\* ?)?# ?undef/, "#undef")
 }
 
-/^# ?define / {
+/^#define / {
 	sub(/^ ?# ?define /, "#define ")
 	macro_name = $2
 	# if this is a function style macro, ignore it
@@ -168,8 +169,6 @@ NR == 1 {
 	next
 }
 
-/^ ?(\/\*)? ?undef )/ {
-	# strip off leading #undef to get our flag name
-	sub(/^ ?(\/\*)? ?undef +)/, "", $0)
-	if(add_flags){undef_flag_macro($1)}
+/^#undef / {
+	if(add_flags){undef_flag_macro($2)}
 }
