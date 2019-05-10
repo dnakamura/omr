@@ -63,7 +63,6 @@ function(make_ddr_set ddr_set)
 		"TARGETS"
 		"$<JOIN:$<TARGET_PROPERTY:${ddr_set},DDR_TARGETS>,\n>"
 		"SUBSETS"
-		"$<TARGET_PROPERTY:${ddr_set},>"
 		"$<JOIN:$<TARGET_PROPERTY:${ddr_set},DDR_SUBSETS>,\n>"
 
 	)
