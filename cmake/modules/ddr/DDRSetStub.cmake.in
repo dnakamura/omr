@@ -31,18 +31,19 @@ project(@DDR_SET_NAME@ LANGUAGES NONE)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${OMR_MODULES_DIR})
 set(DDR_TARGETS
-	$<JOIN:$<TARGET_PROPERTY:@DDR_TARGET_NAME@,DDR_TARGETS>,
+	$<JOIN:$<TARGET_PROPERTY:@DDR_SET_NAME@,DDR_TARGETS>,
 	>
 )
 set(DDR_SUBSETS
-	$<JOIN:$<TARGET_PROPERTY:@DDR_TARGET_NAME@,DDR_SUBSETS>,
+	$<JOIN:$<TARGET_PROPERTY:@DDR_SET_NAME@,DDR_SUBSETS>,
 	>
 )
 
-set(DDR_BLACKLIST "$<TARGET_PROPERTY:@DDR_TARGET_NAME@,BLACKLIST>")
-set(DDR_OVERRIDES_FILE "$<TARGET_PROPERTY:@DDR_TARGET_NAME@,OVERRIDES_FILE>")
-set(DDR_BLOB "$<TARGET_PROPERTY:@DDR_TARGET_NAME@,BLOB>")
-set(DDR_SUPERSET "$<TARGET_PROPERTY:@DDR_TARGET_NAME@,SUPERSET>")
+set(DDR_BLACKLIST "$<TARGET_PROPERTY:@DDR_SET_NAME@,BLACKLIST>")
+set(DDR_OVERRIDES_FILE "$<TARGET_PROPERTY:@DDR_SET_NAME@,OVERRIDES_FILE>")
+set(DDR_BLOB "$<TARGET_PROPERTY:@DDR_SET_NAME@,BLOB>")
+set(DDR_SUPERSET "$<TARGET_PROPERTY:@DDR_SET_NAME@,SUPERSET>")
+set(DDR_MACRO_LIST "${DDR_INFO_DIR}/sets/${DDR_SET_NAME}.macros")
 
 include("@DDR_TOOLS_EXPORT@")
 include(OmrUtility)
@@ -53,7 +54,7 @@ if(NOT DDR_BLOB)
 endif()
 
 if(NOT DDR_SUPERSET)
-	set(DDR_SUPERSET "${CMAKE_CURRENT_BINARY_DOR}/superset.out")
+	set(DDR_SUPERSET "${CMAKE_CURRENT_BINARY_DIR}/superset.out")
 endif()
 
 function(get_relative_path output filename base)
@@ -200,9 +201,9 @@ foreach(subset IN LISTS DDR_SUBSETS)
 	list(APPEND subset_macro_lists "${DDR_INFO_DIR}/sets/${subset}.macros")
 endforeach()
 add_custom_command(
-	OUTPUT macroList
+	OUTPUT ${DDR_MACRO_LIST}
 	DEPENDS ${annotated_files} ${subset_macro_lists}
-	COMMAND cat ${annotated_files} ${subset_macro_lists} > macroList
+	COMMAND cat ${annotated_files} ${subset_macro_lists} > ${DDR_MACRO_LIST}
 )
 
 set(EXTRA_DDRGEN_OPTIONS "")
@@ -229,16 +230,16 @@ omr_join(binaries_list "\n"
 	${target_files}
 	${subset_binaries}
 )
-file(GENERATE OUTPUT "${DDR_INFO_DIR}/sets/${DDR_SET_NAME}.binaries")
+file(GENERATE OUTPUT "${DDR_INFO_DIR}/sets/${DDR_SET_NAME}.binaries" CONTENT "${binaries_list}\n")
 
 add_custom_command(
 	OUTPUT blob.dat superset.out
-	DEPENDS macroList ${target_files} ${subset_binaries}
+	DEPENDS ${DDR_MACRO_LIST} ${target_files} ${subset_binaries}
 	COMMAND
 		omr_ddrgen
 		${target_files} ${subset_binaries}
 		-e
-		--macrolist "${CMAKE_CURRENT_BINARY_DIR}/macroList"
+		--macrolist "${DDR_MACRO_LIST}"
 		--blob  "${DDR_BLOB}"
 		--superset "${DDR_SUPERSET}"
 		${EXTRA_DDRGEN_OPTIONS}

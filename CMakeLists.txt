@@ -115,11 +115,15 @@ configure_file(./omrversionstrings.CMakeTemplate.h omrversionstrings.h)
 include(OmrDDRSupport)
 
 if(NOT DEFINED OMR_DDR_SET)
-	set(OMR_DDR_SET "omr")
+	set(OMR_DDR_SET "omrddr")
 	make_ddr_set(${OMR_DDR_SET})
 endif()
 
 
+# Temporary work arround
+if((DEFINED OMR_DDR_SET) AND (NOT OMR_DDR_SET STREQUAL "omrddr"))
+	ddr_set_add_targets(${OMR_DDR_SET} omrddr)
+endif()
 ###
 ### Native Tooling
 ###

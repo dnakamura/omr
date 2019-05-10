@@ -42,6 +42,7 @@ function(make_ddr_set ddr_set)
 	set(DDR_MACRO_INPUTS_FILE "${DDR_BIN_DIR}/macros.list")
 	set(DDR_TOOLS_EXPORT "${omr_BINARY_DIR}/ddr/tools/DDRTools.cmake")
 	set(DDR_CONFIG_STAMP "${DDR_BIN_DIR}/config.stamp")
+	set(DDR_SET_NAME "${ddr_set}")
 
 	add_custom_command(
 		OUTPUT  "${DDR_CONFIG_STAMP}"
@@ -67,7 +68,7 @@ function(make_ddr_set ddr_set)
 
 	)
 
-	file(GENERATE OUTPUT "${DDR_INFO_DIR}/sets/${ddr_set}")
+	file(GENERATE OUTPUT "${DDR_INFO_DIR}/sets/${ddr_set}" CONTENT "${info_file_template}")
 
 	# Note: DDR sets have themselves as targets to process
 	# This is so that you can process misc headers which dont logicly belong to any other target
@@ -99,12 +100,10 @@ function(ddr_set_add_targets ddr_set)
 	endforeach()
 endfunction(ddr_set_add_targets)
 
-function(target_enable_ddr tgt)
+function(target_enable_ddr_new tgt)
 	if((OMR_HOST_OS STREQUAL "win") OR (NOT OMR_DDR))
 		return()
 	endif()
-
-	omr_assert(FATAL_ERROR TEST ARGC LESS 3 MESSAGE "target_enable_ddr called with wrong number of arguments")
 
 	set(opt_EARLY_SOURCE_EVAL )
 	set(opt_NO_SOURCE_EVAL )
@@ -119,14 +118,11 @@ function(target_enable_ddr tgt)
 		message(FATAL_ERROR "Cannot call enable_ddr on interface libraries")
 	endif()
 
-
-	if(opt_EARLY_SOURCE_EVAL OR opt_NO_SOURCE_EVAL)
-		if(opt_EARLY_SOURCE_EVAL)
-			get_target_property(sources "${tgt}" "SOURCES")
-			string(GENEX_STRIP "${sources}" cleaned_sources)
-			set_target_properties("${tgt}" PROPERTIES ${source_property} "${cleaned_sources}")
-		endif()
-		set(source_list  "$<JOIN:$<TARGET_PROPERTY:${tgt},DDR_EVAL_SOURCE>,\n>")
+	if(opt_EARLY_SOURCE_EVAL)
+		get_target_property(sources "${tgt}" "SOURCES")
+		string(GENEX_STRIP "${sources}" cleaned_sources)
+		set_target_properties("${tgt}" PROPERTIES DDR_EVAL_SOURCES "${cleaned_sources}")
+		set(source_list  "$<JOIN:$<TARGET_PROPERTY:${tgt},DDR_EVAL_SOURCES>,\n>")
 	elseif(opt_NO_SOURCE_EVAL)
 		set(source_list "")
 	else()
@@ -152,9 +148,9 @@ function(target_enable_ddr tgt)
 	endif()
 
 	file(GENERATE OUTPUT "${CMAKE_BINARY_DIR}/ddr_info/targets/${tgt}.txt" CONTENT "${MAGIC_TEMPLATE}\n")
+endfunction(target_enable_ddr_new)
 
-	# if we were given a DDR set, add this target to it
-	if(ARGC EQUAL 2)
-		ddr_set_add_targets(${ARGV1} ${tgt})
-	endif()
+function(target_enable_ddr tgt ddr_set)
+	target_enable_ddr_new(${tgt} ${ARGN})
+	ddr_set_add_targets(${ddr_set} ${tgt})
 endfunction(target_enable_ddr)
