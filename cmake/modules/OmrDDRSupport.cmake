@@ -70,7 +70,7 @@ function(ddr_set_add_targets ddr_set)
 	endif()
 
 	foreach(tgt IN LISTS ARGN)
-		omr_assert(FATAL_ERROR TEST TARGET "${ddr_set}" MESSAGE "ddrset_add_targets called on non-existant ddr-set ${ddr_set}"
+		omr_assert(FATAL_ERROR TEST TARGET "${ddr_set}" MESSAGE "ddrset_add_targets called on non-existant ddr-set ${ddr_set}")
 		# Check if the target we are adding is iteslf a DDR set
 		get_target_property(tgt_is_ddr_set ${tgt} DDR_SET)
 		if(tgt_is_ddr_set)
