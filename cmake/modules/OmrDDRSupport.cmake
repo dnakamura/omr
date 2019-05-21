@@ -63,7 +63,7 @@ function(make_ddr_set set_name)
 	# Note: DDR sets have themselves as targets to process
 	# This is so that you can process misc headers which dont logicly belong to any other target
 	target_enable_ddr(${DDR_TARGET_NAME})
-	set_property(TARGET "${ddr_set}" APPEND PROPERTY DDR_TARGETS "${ddr_set}")
+	set_property(TARGET "${DDR_TARGET_NAME}" APPEND PROPERTY DDR_TARGETS "${DDR_TARGET_NAME}")
 endfunction(make_ddr_set)
 
 function(ddr_set_add_targets ddr_set)
