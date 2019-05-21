@@ -63,6 +63,7 @@ function(make_ddr_set set_name)
 	# Note: DDR sets have themselves as targets to process
 	# This is so that you can process misc headers which dont logicly belong to any other target
 	target_enable_ddr(${DDR_TARGET_NAME})
+	set_property(TARGET "${ddr_set}" APPEND PROPERTY DDR_TARGETS "${ddr_set}")
 endfunction(make_ddr_set)
 
 function(ddr_set_add_targets ddr_set)
@@ -70,8 +71,10 @@ function(ddr_set_add_targets ddr_set)
 		return()
 	endif()
 
+	omr_assert(FATAL_ERROR TEST TARGET "${ddr_set}" MESSAGE "ddrset_add_targets called on non-existant ddr-set ${ddr_set}")
+	get_target_property(is_ddrset "${ddr_set}" DDR_SET)
+	omr_assert(FATAL_ERROR TEST is_ddrset MESSAGE "ddrset_add_targets called on ddr-set ${ddr_set}, which is not a ddr set")
 	foreach(tgt IN LISTS ARGN)
-		omr_assert(FATAL_ERROR TEST TARGET "${ddr_set}" MESSAGE "ddrset_add_targets called on non-existant ddr-set ${ddr_set}")
 		# Check if the target we are adding is iteslf a DDR set
 		get_target_property(tgt_is_ddr_set ${tgt} DDR_SET)
 		if(tgt_is_ddr_set)
@@ -105,10 +108,8 @@ function(target_enable_ddr tgt)
 	omr_assert(FATAL_ERROR TEST NOT opt_UNPARSED_ARGUMENTS MESSAGE "target_enable_ddr: unrecognized options ${opt_UNPARSED_ARGUMENTS}")
 
 
-	set(DDR_SET_TARGET "${ddr_set}")
 	set(DDR_INFO_DIR "${CMAKE_BINARY_DIR}/ddr_info")
 	omr_assert(FATAL_ERROR TEST TARGET ${tgt} MESSAGE "target_enable_ddr called on non-existant target ${tgt}")
-	omr_assert(FATAL_ERROR TEST TARGET "${DDR_SET_TARGET}" MESSAGE "target_enable_ddr called on non-existant ddr_set ${ddr_set}")
 
 	get_target_property(target_type "${tgt}" TYPE)
 	if(target_type MATCHES "INTERFACE_LIBRARY")
