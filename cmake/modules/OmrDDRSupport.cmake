@@ -54,14 +54,15 @@ function(make_ddr_set set_name)
 		COMMAND ${CMAKE_COMMAND} --build "${DDR_BIN_DIR}"
 	)
 	set_property(TARGET "${DDR_TARGET_NAME}" PROPERTY DDR_BIN_DIR "${DDR_BIN_DIR}")
-
-	# Note: DDR sets have themselves as targets to process
-	# This is so that you can process misc headers which dont logicly belong to any other target
-	target_enable_ddr(${ddr_set})
+	set_property(TARGET "${DDR_TARGET_NAME}" PROPERTY DDR_SET TRUE)
 
 	file(READ ${OMR_MODULES_DIR}/ddr/DDRSetStub.cmake.in cmakelist_template)
 	string(CONFIGURE "${cmakelist_template}" cmakelist_template @ONLY)
 	file(GENERATE OUTPUT ${DDR_BIN_DIR}/CMakeLists.txt CONTENT "${cmakelist_template}")
+
+	# Note: DDR sets have themselves as targets to process
+	# This is so that you can process misc headers which dont logicly belong to any other target
+	target_enable_ddr(${ddr_set})
 endfunction(make_ddr_set)
 
 function(ddr_set_add_targets ddr_set)
