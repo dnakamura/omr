@@ -230,7 +230,7 @@ omr_join(binaries_list "\n"
 	${target_files}
 	${subset_binaries}
 )
-file(GENERATE OUTPUT "${DDR_INFO_DIR}/sets/${DDR_SET_NAME}.binaries")
+file(WRITE "${DDR_INFO_DIR}/sets/${DDR_SET_NAME}.binaries" "${binaries_list}")
 
 
 add_custom_command(
