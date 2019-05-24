@@ -19,21 +19,21 @@
 # SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR LicenseRef-GPL-2.0 WITH Assembly-exception
 ###############################################################################
 
-add_library(omr_ddr_blobgen
+add_library(ddr_blobgen
 	java/genBinaryBlob.cpp
 	java/genBlobJava.cpp
 	java/genSuperset.cpp
 )
 
-set_property(TARGET omr_ddr_blobgen PROPERTY CXX_STANDARD 11)
+set_property(TARGET ddr_blobgen PROPERTY CXX_STANDARD 11)
 
-target_link_libraries(omr_ddr_blobgen
-	omr_ddr_base
-	omr_ddr_ir
-	omr_ddr_macros
-	omr_ddr_scanner
+target_link_libraries(ddr_blobgen
+	ddr_base
+	ddr_ir
+	ddr_macros
+	ddr_scanner
 )
 
-target_compile_definitions(omr_ddr_blobgen
+target_compile_definitions(ddr_blobgen
 	PRIVATE __STDC_LIMIT_MACROS
 )

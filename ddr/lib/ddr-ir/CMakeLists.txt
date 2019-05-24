@@ -19,7 +19,7 @@
 # SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR LicenseRef-GPL-2.0 WITH Assembly-exception
 ###############################################################################
 
-add_library(omr_ddr_ir
+add_library(ddr_ir
 	ClassType.cpp
 	ClassUDT.cpp
 	EnumMember.cpp
@@ -36,12 +36,12 @@ add_library(omr_ddr_ir
 	UnionUDT.cpp
 )
 
-set_property(TARGET omr_ddr_ir PROPERTY CXX_STANDARD 11)
+set_property(TARGET ddr_ir PROPERTY CXX_STANDARD 11)
 
-target_link_libraries(omr_ddr_ir
-	omr_ddr_base
+target_link_libraries(ddr_ir
+	ddr_base
 )
 
-target_compile_definitions(omr_ddr_ir
+target_compile_definitions(ddr_ir
 	PRIVATE __STDC_LIMIT_MACROS
 )

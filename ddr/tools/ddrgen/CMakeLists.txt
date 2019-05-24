@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2017, 2018 IBM Corp. and others
+# Copyright (c) 2017, 2019 IBM Corp. and others
 #
 # This program and the accompanying materials are made available under
 # the terms of the Eclipse Public License 2.0 which accompanies this
@@ -19,24 +19,24 @@
 # SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR LicenseRef-GPL-2.0 WITH Assembly-exception
 ###############################################################################
 
-add_executable(omr_ddrgen
+add_executable(ddrgen
 	ddrgen.cpp
 )
 
 set_property(
-	TARGET omr_ddrgen
+	TARGET ddrgen
 	PROPERTY CXX_STANDARD 11
 )
 
-target_link_libraries(omr_ddrgen
-	omr_ddr_base
-	omr_ddr_blobgen
-	omr_ddr_ir
-	omr_ddr_macros
-	omr_ddr_scanner
+target_link_libraries(ddrgen
+	ddr_base
+	ddr_blobgen
+	ddr_ir
+	ddr_macros
+	ddr_scanner
 	${OMR_PORT_LIB}
 )
 
 if(OMRPORT_OMRSIG_SUPPORT)
-	target_link_libraries(omr_ddrgen omrsig)
+	target_link_libraries(ddrgen omrsig)
 endif()

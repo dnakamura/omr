@@ -91,20 +91,29 @@ function(target_enable_ddr tgt)
 		return()
 	endif()
 
-	set(opt_EARLY_SOURCE_EVAL )
-	set(opt_UNPARSED_ARGUMENTS )
+	set(options
+		EARLY_SOURCE_EVAL
+		GLOB_HEADERS
+		RECURSIVE_GLOB_HEADERS
+	)
+	set(oneValueArgs "")
+	set(multiValueArgs "")
+
+	# Clear variables
+	foreach(opt_name IN LISTS options oneValueArgs multiValueArgs)
+		set(opt_${opt_name} )
+	endforeach()
 
 	# Check for people still calling via old style (i.e. second argument is the name of a ddr set)
 	set(legacy_ddr_set "")
 	if(TARGET "${ARGV1}")
 		get_target_property(argv1_is_ddr_set ${ARGV1} DDR_SET)
 		if(argv1_is_ddr_set)
-			set(legacy_ddr_set "${ARGV1}")
-			list(REMOVE_AT ARGN 0)
+			message(FATAL_ERROR "OLD SIGNATURE")
 		endif()
 	endif()
 
-	cmake_parse_arguments(opt "EARLY_SOURCE_EVAL" "" "" ${ARGN})
+	cmake_parse_arguments(opt "${options}" "${oneValueArgs}" "${multiValueArgs}"  ${ARGN})
 	omr_assert(FATAL_ERROR TEST NOT opt_UNPARSED_ARGUMENTS MESSAGE "target_enable_ddr: unrecognized options ${opt_UNPARSED_ARGUMENTS}")
 
 
@@ -144,7 +153,23 @@ function(target_enable_ddr tgt)
 
 	file(GENERATE OUTPUT "${DDR_INFO_DIR}/targets/${tgt}.txt" CONTENT "${MAGIC_TEMPLATE}\n")
 
-	if(legacy_ddr_set)
-		ddr_set_add_targets(${legacy_ddr_set} ${tgt})
+	if(opt_GLOB_HEADERS OR opt_RECURSIVE_GLOB_HEADERS)
+		get_target_property(source_dir ${tgt} SOURCE_DIR)
+		if(opt_RECURSIVE_GLOB_HEADERS)
+			set(glob  GLOB_RECURSE)
+		else()
+			set(glob GLOB)
+		endif()
+		file(${glob} c_headers $[source_dir}/*.h)
+		file(${glob} cpp_headers $[source_dir}/*.hpp)
+		ddr_add_headers(${tgt}
+			${c_headers}
+			${cpp_headers}
+		)
+
 	endif()
 endfunction(target_enable_ddr)
+
+function(ddr_add_headers tgt)
+	set_property(TARGET tgt APPEND PROPERTY DDR_HEADERS ${ARGN})
+endfunction(ddr_add_headers)
