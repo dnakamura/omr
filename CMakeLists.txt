@@ -84,6 +84,21 @@ target_include_directories(omr_base
 		$<INSTALL_INTERFACE:${OMR_INSTALL_INC_DIR}>
 )
 
+if(OMR_OS_ZOS)
+	if(OMR_USE_NATIVE_ENCODING)
+		target_link_libraries(omr_base INTERFACE omr_ebcdic)
+	else()
+		target_link_libraries(omr_base INTERFACE omr_ascii)
+	endif()
+)
+
+if(OMR_OS_ZOS AND OMR_USE_NATIVE_ENCODING)
+	target_compile_definitions(omr_base
+		INTERFACE
+			-DOMR_EBCDIC
+	)
+endif()
+
 install(
 	TARGETS omr_base
 	EXPORT OmrTargets
