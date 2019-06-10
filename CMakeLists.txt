@@ -115,6 +115,15 @@ configure_file(./omrversionstrings.CMakeTemplate.h omrversionstrings.h)
 include(OmrDDRSupport)
 
 make_ddr_set(omrddr)
+ddr_add_headers(omrddr
+	${CMAKE_CURRENT_BINARY_DIR}/omrcfg.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include_core/j9nongenerated.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include_core/omr.h
+)
+set_property(TARGET omrddr APPEND PROPERTY INCLUDE_DIRECTORIES
+	$<TARGET_PROPERTY:omr_base,INTERFACE_INCLUDE_DIRECTORIES>
+)
+
 
 ###
 ### Native Tooling

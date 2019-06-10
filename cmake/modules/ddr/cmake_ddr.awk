@@ -118,7 +118,7 @@ function begin_file(filename){
 BEGIN{
 	macro_name = "";
 	idx = 0;
-	add_values = 0;
+	add_values = 1;
 
 	add_flags = 0;
 	pending_macro = ""
@@ -131,6 +131,8 @@ END {
 
 NR == 1 {
 	print "DDRFILE_BEGIN " FILENAME
+	add_values = 1;
+	add_flags = 0;
 }
 
 /@ddr_options: *valuesonly/ { add_values = 1; add_flags = 0}

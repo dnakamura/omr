@@ -64,7 +64,7 @@ elseif(OMR_HOST_OS STREQUAL "linux")
 
 	target_sources(omr_ddr_scanner
 		PRIVATE
-			dwarf/DwarfFunctions.cpp
+			#dwarf/DwarfFunctions.cpp
 			dwarf/DwarfScanner.cpp
 	)
 

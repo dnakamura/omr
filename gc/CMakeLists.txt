@@ -373,6 +373,11 @@ target_link_libraries(omrgc
 		${OMR_HOOK_LIB}
 )
 target_enable_ddr(omrgc EARLY_SOURCE_EVAL)
+ddr_add_headers(omrgc
+base/HeapMap.hpp 
+base/segregated/RegionPoolSegregated.hpp
+include/omrmodroncore.h
+)
 ddr_set_add_targets(omrddr omrgc)
 
 set_target_properties(omrgc omrgc_hookgen omrgc_tracegen PROPERTIES FOLDER gc)

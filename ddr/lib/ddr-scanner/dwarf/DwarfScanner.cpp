@@ -688,16 +688,22 @@ DwarfScanner::addDieToIR(Dwarf_Die die, Dwarf_Half tag, NamespaceUDT *outerUDT, 
 	bool dieBlackListed = false;
 	bool isSubUDT = (NULL != outerUDT);
 	bool isNewType = false;
+		bool debug = false;
 
 	rc = getOrCreateNewType(die, tag, &newType, outerUDT, &isNewType);
+	if (DDR_RC_OK == rc) {
+		debug = (newType->_name == "MM_GCExtensions");
+	}
 
 	if ((DDR_RC_OK == rc) && isNewType && (NULL == outerUDT)) {
 		rc = blackListedDie(die, &dieBlackListed);
+		if(debug && dieBlackListed) printf("BLACKLIST!\n");
 	}
 
 	if (DDR_RC_OK == rc) {
 		if (!isNewType) {
 			/* Entry is for a type that has already been found. */
+			//if(debug) printf("DEBUG: reuse\n");
 		} else if (dieBlackListed) {
 			newType->_blacklisted = true;
 		} else if ((DW_TAG_class_type == tag)
@@ -710,6 +716,9 @@ DwarfScanner::addDieToIR(Dwarf_Die die, Dwarf_Half tag, NamespaceUDT *outerUDT, 
 			/* If the type was added as a stub with an outer type, such as is the case
 			 * for types defined within namespaces, do not add it to the main list of types.
 			 */
+			 if(debug){
+	printf("DEBUG: no reuse\n");
+			 } 
 			isSubUDT = isSubUDT || (string::npos != newType->getFullName().find("::"));
 			rc = newType->acceptVisitor(DwarfVisitor(this, outerUDT, die));
 			DEBUGPRINTF("Done scanning child info for %s", newType->_name.c_str());
