@@ -194,8 +194,11 @@ if(OMR_OS_ZOS)
 		set(compiler_export_name "${CMAKE_SHARED_LIBRARY_PREFIX}${TARGET_NAME}${lib_suffix}.x")
 		# The name of the export side deck, as desired by cmake
 		set(cmake_export_name "${CMAKE_IMPORT_LIBRARY_PREFIX}${TARGET_NAME}${CMAKE_IMPORT_LIBRARY_SUFFIX}")
+
+		message(STATUS "DEBUG compiler=${compiler_export_name} cmake=${cmake_export_name}")
 		add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
 			COMMAND "${CMAKE_COMMAND}" -E copy "${compiler_export_name}"  "$<TARGET_FILE_DIR:${TARGET_NAME}>/${cmake_export_name}"
+			COMMAND "echo" "${CMAKE_COMMAND}" -E copy "${compiler_export_name}"  "$<TARGET_FILE_DIR:${TARGET_NAME}>/${cmake_export_name}"
 		)
 	endfunction()
 else()
