@@ -23,6 +23,6 @@
 {
 	global :
 	$<JOIN:$<TARGET_PROPERTY:@TARGET_NAME@,EXPORTED_SYMBOLS>,
-	;>
+	;>;
 	local : *;
 };
