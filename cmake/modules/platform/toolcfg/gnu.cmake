@@ -125,5 +125,8 @@ function(_omr_toolchain_process_exports TARGET_NAME)
 		"${exp_file}"
 	)
 
-	set_property(TARGET ${TARGET_NAME} APPEND_STRING PROPERTY LINK_FLAGS " -Wl,--version-script,${exp_file}")
+	target_link_libraries(${TARGET_NAME}
+		PRIVATE
+			"-Wl,--version-script,${exp_file}")
+	#set_property(TARGET ${TARGET_NAME} APPEND_STRING PROPERTY LINK_FLAGS " -Wl,--version-script,${exp_file}")
 endfunction()
