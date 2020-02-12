@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2017, 2019 IBM Corp. and others
+# Copyright (c) 2017, 2020 IBM Corp. and others
 #
 # This program and the accompanying materials are made available under
 # the terms of the Eclipse Public License 2.0 which accompanies this
@@ -21,18 +21,10 @@
 
 list(APPEND OMR_PLATFORM_DEFINITIONS
 	-DOMR_OS_WINDOWS
-	-D_CRT_SECURE_NO_WARNINGS
-	-DCRTAPI1=_cdecl
-	-DCRTAPI2=_cdecl
-	-D_MT
 	-D_WINSOCKAPI_
-	-D_DLL
 	-D_HAS_EXCEPTIONS=0
-	-D_VARIADIC_MAX=10
-)
 
-# Set minimum required system to Win 7, so we can use GetCurrentProcessorNumberEx
-list(APPEND OMR_PLATFORM_DEFINITIONS
+	# Set minimum required system to Win 7, so we can use GetCurrentProcessorNumberEx
 	-D_WIN32_WINNT=0x0601
 	-DWINVER=0x0601
 )

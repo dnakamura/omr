@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2017, 2019 IBM Corp. and others
+# Copyright (c) 2017, 2020 IBM Corp. and others
 #
 # This program and the accompanying materials are made available under
 # the terms of the Eclipse Public License 2.0 which accompanies this
@@ -31,6 +31,13 @@ list(APPEND OMR_PLATFORM_COMPILE_OPTIONS
 	/wd4577 # Disable warning: Specifying noexcept when exceptions are disabled
 	/wd4091 # Disable warning: Caused by broken windows SDK, see also https://connect.microsoft.com/VisualStudio/feedback/details/1302025/warning-c4091-in-sdk-7-1a-shlobj-h-1051-dbghelp-h-1054-3056
 )
+
+list(APPEND OMR_PLATFORM_DEFINITIONS
+	-D_CRT_SECURE_NO_WARNINGS
+	-DCRTAPI1=_cdecl
+	-DCRTAPI2=_cdecl
+)
+
 
 if(OMR_ENV_DATA64)
 	set(TARGET_MACHINE "AMD64")
