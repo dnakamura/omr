@@ -35,7 +35,7 @@ if(OMR_ENHANCED_WARNINGS)
 endif()
 
 if(OMR_HOST_OS STREQUAL "win")
-	target_compile_definitions(omrsig PRIVATE -DMSVC_RUNTIME_DLL="${OMR_MSVC_CRT}")
+	target_compile_definitions(omrsig PRIVATE -DMSVC_RUNTIME_DLL="UCRTBASE")
 endif()
 
 omr_add_exports(omrsig
