@@ -444,6 +444,7 @@ target_link_libraries(omrport
 		j9hashtable
 		j9pool
 		${OMR_THREAD_LIB}
+		omrsig
 )
 
 if(OMR_HOST_OS STREQUAL "linux")
