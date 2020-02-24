@@ -48,3 +48,5 @@ find_program(CMAKE_MC_COMPILER mc.exe HINTS "${kit_dir}")
 if(NOT CMAKE_MC_COMPILER)
 	message(SEND_ERROR "Failed to find message compiler (mc.exe)")
 endif()
+
+list(APPEND TR_COMPILE_DEFINITIONS -DWINDOWS)

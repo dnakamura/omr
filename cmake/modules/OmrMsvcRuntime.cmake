@@ -76,11 +76,13 @@ elseif(MSVC_VERSION EQUAL 1800) # VS 12
 	string(CONCAT msvc_crt
 		$<$<CONFIG:Debug>:MSVCR120D>
 		$<$<CONFIG:Release>:MSVCR120>
+		$<$<CONFIG:RelWithDebInfo>:MSVCR120>
 	)
 elseif(MSVC_VERSION GREATER 1800) # VS 14+
 	string(CONCAT msvc_crt
 		$<$<CONFIG:Debug>:UCRTBASED>
 		$<$<CONFIG:Release>:UCRTBASE>
+		$<$<CONFIG:RelWithDebInfo>:UCRTBASE>
 	)
 else()
 	set(msvc_crt NOTFOUND)
