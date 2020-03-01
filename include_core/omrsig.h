@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2018 IBM Corp. and others
+ * Copyright (c) 2015, 2020 IBM Corp. and others
  *
  * This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License 2.0 which accompanies this
@@ -32,23 +32,20 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#if defined(OSX)
+/* GNU  C library decorates its functions with __THROW which we need to match.
+   Define it to be an empty macro on other platforms.
+*/
+#if !defined(__GLIBC__)
 #define __THROW
-#endif /* defined(OSX) */
+#endif
 
-#if defined(LINUXPPC)
-typedef __sighandler_t sighandler_t;
-#elif defined(LINUX) || defined(OSX)
-typedef void (*sighandler_t)(int sig);
-#elif defined(J9ZOS390) || defined(AIXPPC)
-typedef void (*sighandler_t)(int sig);
-#define __THROW
-#elif defined(OMR_OS_WINDOWS)
+#if defined(OMR_OS_WINDOWS)
 /* Use sig_handler_t instead of sighandler_t for Windows. Define it for compatibility. */
 #define sig_handler_t sighandler_t
-typedef void (__cdecl *sighandler_t)(int signum);
-#define __THROW
-#endif /* defined(OMR_OS_WINDOWS) */
+typedef void(__cdecl* sighandler_t)(int signum);
+#else /* defined(OMR_OS_WINDOWS */
+typedef void (*sighandler_t)(int sig);
+#endif
 
 #define OMRSIG_RC_ERROR -1
 #define OMRSIG_RC_SIGNAL_HANDLED 0
