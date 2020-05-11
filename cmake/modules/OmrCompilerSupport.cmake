@@ -352,6 +352,9 @@ function(create_omr_compiler_library)
 
 	omr_inject_object_modification_targets(COMPILER_OBJECTS ${COMPILER_NAME} ${COMPILER_OBJECTS})
 
+	# warnings as errors and enhanced warnings currently don't work
+	set(OMR_WARNINGS_AS_ERRORS OFF)
+	set(OMR_ENHANCED_WARNINGS OFF)
 	omr_add_library(${COMPILER_NAME} ${LIB_TYPE}
 		${BUILD_NAME_FILE}
 		${COMPILER_OBJECTS}

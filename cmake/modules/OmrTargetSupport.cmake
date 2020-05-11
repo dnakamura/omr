@@ -69,6 +69,16 @@ function(omr_add_library name)
 
 	add_library(${name} ${lib_type} ${opt_UNPARSED_ARGUMENTS})
 
+	if(NOT lib_type STREQUAL "INTERFACE")
+		if(OMR_WARNINGS_AS_ERRORS)
+			target_compile_options(${name} PRIVATE ${OMR_WARNING_AS_ERROR_FLAG})
+		endif()
+
+		if(OMR_ENHANCED_WARNINGS)
+			target_compile_options(${name} PRIVATE ${OMR_ENHANCED_WARNING_FLAG})
+		endif()
+	endif()
+
 	if(opt_SHARED)
 		# split debug info if applicable. Note: omr_split_debug is responsible for checking OMR_SEPARATE_DEBUG_INFO
 		omr_process_split_debug(${name})
@@ -81,5 +91,14 @@ endfunction()
 # split debug info is handled
 function(omr_add_executable name)
 	add_executable(${name} ${ARGN})
+
+	if(OMR_WARNINGS_AS_ERRORS)
+		target_compile_options(${name} PRIVATE ${OMR_WARNING_AS_ERROR_FLAG})
+	endif()
+
+	if(OMR_ENHANCED_WARNINGS)
+		target_compile_options(${name} PRIVATE ${OMR_ENHANCED_WARNING_FLAG})
+	endif()
+
 	omr_process_split_debug(${name})
 endfunction()
