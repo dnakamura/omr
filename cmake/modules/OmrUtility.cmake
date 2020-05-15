@@ -157,7 +157,7 @@ function(omr_genex_property_chain target output_var)
 	list(REVERSE ARGN)
 	# start off the generator expression with the fallback case, which is now
 	# at the front of the list
-	list(GET ARGN out)
+	list(GET ARGN 0 out)
 	list(REMOVE 0 ARGN)
 
 	foreach(property_name IN LISTS ARGN)
