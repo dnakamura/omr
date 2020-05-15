@@ -95,14 +95,15 @@ function(_omr_toolchain_separate_debug_symbols tgt)
 			COMMAND dsymutil -o "${dbg_file}" "${exe_file}"
 		)
 	else()
-		omr_get_target_path(target_path ${tgt})
-		omr_replace_suffix(dbg_file "${target_path}" ".debuginfo")
+		omr_get_target_output_info(${tgt} output_dir output_name)
+		set(dbg_filename "${output_name}.debuginfo")
+		set(dbg_file "${output_dir}/${dbg_filename}")
 		add_custom_command(
 			TARGET "${tgt}"
 			POST_BUILD
 			COMMAND "${CMAKE_OBJCOPY}" --only-keep-debug "${exe_file}" "${dbg_file}"
 			COMMAND "${CMAKE_OBJCOPY}" --strip-debug "${exe_file}"
-			COMMAND "${CMAKE_OBJCOPY}" --add-gnu-debuglink="${dbg_file}" "${exe_file}"
+			COMMAND "${CMAKE_OBJCOPY}" --add-gnu-debuglink="${dbg_filename}" "${exe_file}"
 		)
 	endif()
 	set_target_properties(${tgt} PROPERTIES OMR_DEBUG_FILE "${dbg_file}")
