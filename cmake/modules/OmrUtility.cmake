@@ -139,7 +139,7 @@ function(omr_count_true out)
 	set("${out}" "${result}" PARENT_SCOPE)
 endfunction(omr_count_true)
 
-# omr_genex_property_chain(<target> <output_var> [<property> ...] <fallback>)
+# omr_genex_property_chain(<output_var> <target> [<property> ...] <fallback>)
 #   Create a long generator expression chain which will results in the first
 #   <property> value (of <target>) which evaluates to non-false value, or
 #   <fallback> if they all evaluate to false
@@ -151,19 +151,20 @@ endfunction(omr_count_true)
 #      else
 #          continue
 #   return fallback;
-function(omr_genex_property_chain target output_var)
+function(omr_genex_property_chain output_var target )
 	omr_assert(TEST ARGC GREATER "2" MESSAGE "No fallback case provided")
 
 	list(REVERSE ARGN)
 	# start off the generator expression with the fallback case, which is now
 	# at the front of the list
 	list(GET ARGN 0 out)
-	list(REMOVE 0 ARGN)
+	list(REMOVE_AT ARGN 0)
 
-	foreach(property_name IN LISTS ARGN)
-		set(property_genex "$<TARGET_PROPERTY:${target},${property_name}")
-		set(property_bool "$<BOOL:${property_genex}>")
-		set(genex "$<${property_bool}:${property_genex}>$<$<NOT:${property_bool}>:${out}>")
+	foreach(prop_name IN LISTS ARGN)
+
+		set(prop_genex "$<TARGET_PROPERTY:${target},${prop_name}>")
+		set(prop_bool "$<BOOL:${prop_genex}>")
+		set(out "$<${prop_bool}:${prop_genex}>$<$<NOT:${prop_bool}>:${out}>")
 	endforeach()
 	set(${output_var} "${out}" PARENT_SCOPE)
 endfunction()
@@ -200,7 +201,6 @@ function(omr_get_target_output_info tgt output_dir_var output_name_var)
 
 	omr_genex_property_chain(dir_genex ${tgt} ${output_dirs} "$<TARGET_PROPERTY:${tgt},BINARY_DIR>")
 	omr_genex_property_chain(name_genex ${tgt} ${output_names} "${tgt}")
-
 	set(${output_dir_var} "${dir_genex}" PARENT_SCOPE)
-	set(${output_name_var} "$<TARGET_PROPERY:${tgt},PREFIX>${name_genex}")
+	set(${output_name_var} "$<TARGET_PROPERTY:${tgt},PREFIX>${name_genex}" PARENT_SCOPE)
 endfunction()
