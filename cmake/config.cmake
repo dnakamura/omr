@@ -231,6 +231,8 @@ if(OMR_HOST_OS STREQUAL "win")
 endif()
 
 set(OMR_SEPARATE_DEBUG_INFO OFF CACHE BOOL "Maintain debug info in a separate file")
+set(OMR_SPLIT_DWARF OFF CACHE BOOL "Experimental native split DWARF support")
+set(OMR_USE_GOLD OFF CACHE BOOL "Use the GNU gold linker")
 set(OMR_FLATTEN_DEBUG_INFO OFF CACHE BOOL "Enable generation of flattened debug info on osx")
 if(OMR_OS_OSX)
 	set(default_debug_ext ".dSYM")

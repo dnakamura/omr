@@ -23,6 +23,27 @@ set(OMR_WARNING_AS_ERROR_FLAG -Werror)
 
 set(OMR_ENHANCED_WARNING_FLAG -Wall)
 
+if(OMR_USE_SPLIT_DWARF)
+	if(NOT OMR_OS_LINUX)
+		message(FATAL_ERROR "Split dwarf unsupported on this platform")
+	endif()
+	if(CMAKE_C_COMPILER_ID STREQUAL "GNU") 
+		omr_assert(TEST OMR_USE_GOLD MESSAGE "OMR_USE_SPLIT_DWARF on gcc requires OMR_USE_GOLD")
+		list(APPEND OMR_PLATFORM_COMPILE_OPTIONS -gsplit-dwarf)
+	else()
+		message(FATAL_ERROR "OMR_USE_SPLIT_DWARF requires gcc")
+	endif()
+endif()
+
+if(OMR_USE_GOLD)
+	set(link_flags "-fuse-ld=gold")
+	if(OMR_USE_SPLIT_DWARF)
+		list(APPEND link_flags "-Wl,--gdb-index")
+	endif()
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=gold")
+	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fuse-ld=gold")
+endif()
+
 # disable builtin strncpy buffer length check for components that use variable length
 # array fields at the end of structs
 set(OMR_STRNCPY_FORTIFY_OPTIONS -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1)
@@ -102,13 +123,22 @@ function(_omr_toolchain_separate_debug_symbols tgt)
 	else()
 		omr_get_target_output_genex(${tgt} output_name)
 		set(dbg_file "${output_name}${OMR_DEBUG_INFO_OUTPUT_EXTENSION}")
-		add_custom_command(
-			TARGET "${tgt}"
-			POST_BUILD
-			COMMAND "${CMAKE_OBJCOPY}" --only-keep-debug "${exe_file}" "${dbg_file}"
-			COMMAND "${CMAKE_OBJCOPY}" --strip-debug "${exe_file}"
-			COMMAND "${CMAKE_OBJCOPY}" --add-gnu-debuglink="${dbg_file}" "${exe_file}"
-		)
+		if(OMR_USE_SPLIT_DWARF)
+			add_custom_command(
+				TARGET "${tgt}"
+				POST_BUILD
+				COMMAND "dwp" -e "${exe_file}" -o "${dbg_file"
+				COMMAND "${CMAKE_OBJCOPY}" --strip-debug "${exe_file}"
+			)
+		else()
+			add_custom_command(
+				TARGET "${tgt}"
+				POST_BUILD
+				COMMAND "${CMAKE_OBJCOPY}" --only-keep-debug "${exe_file}" "${dbg_file}"
+				COMMAND "${CMAKE_OBJCOPY}" --strip-debug "${exe_file}"
+				COMMAND "${CMAKE_OBJCOPY}" --add-gnu-debuglink="${dbg_file}" "${exe_file}"
+			)
+		endif()
 	endif()
 	set_target_properties(${tgt} PROPERTIES OMR_DEBUG_FILE "${dbg_file}")
 endfunction()
