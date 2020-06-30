@@ -40,7 +40,8 @@ else
   GLOBAL_ASFLAGS += -a32 -mppc
 endif
 
-GLOBAL_CFLAGS += -qarch=ppc -qalias=noansi -qxflag=LTOL:LTOL0 -qsuppress=1506-1108
+# 1506-995 = "An aggregate containing a flexible array member cannot be used as a member of a structure or as an array element."
+GLOBAL_CFLAGS += -qarch=ppc -qalias=noansi -qxflag=LTOL:LTOL0 -qsuppress=1506-1108:1506-995
 GLOBAL_CXXFLAGS+=-qlanglvl=extended0x -qarch=ppc -qalias=noansi -qxflag=LTOL:LTOL0 -qsuppress=1506-1108
 GLOBAL_CPPFLAGS+=-D_XOPEN_SOURCE_EXTENDED=1 -D_ALL_SOURCE -DRS6000 -DAIXPPC -D_LARGE_FILES
 

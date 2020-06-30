@@ -230,7 +230,8 @@ else
           GLOBAL_CXXFLAGS+=-m32
         endif
       else
-        GLOBAL_CFLAGS+=-qalias=noansi -qxflag=LTOL:LTOL0 -qxflag=selinux
+        # 1506-995 = "An aggregate containing a flexible array member cannot be used as a member of a structure or as an array element."
+        GLOBAL_CFLAGS+=-qalias=noansi -qxflag=LTOL:LTOL0 -qxflag=selinux -qsuppress=1506-995
         GLOBAL_CXXFLAGS+=-qalias=noansi -qxflag=LTOL:LTOL0 -qxflag=selinux -qsuppress=1540-1087:1540-1088:1540-1090
         ifeq (1,$(OMR_ENV_DATA64))
           ifeq ($(OMR_ENV_LITTLE_ENDIAN),1)
