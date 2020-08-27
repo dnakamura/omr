@@ -56,6 +56,7 @@ if(NOT DiaSDK_ROOT)
 				OUTPUT_VARIABLE reg_key
 				RESULT_VARIABLE rc
 			)
+			message(STATUS "DEBUG ${rc} -${reg_key}")
 			if((rc EQUAL 0) AND reg_key)
 				get_filename_component(DIA_COM_DLL_DIR "${reg_key}" DIRECTORY)
 			endif()
