@@ -39,14 +39,17 @@ get_filename_component(VSPath ${CMAKE_CXX_COMPILER} DIRECTORY CACHE)
 # However, these have the potential to change as the DIA API changes.
 if(NOT DiaSDK_ROOT)
 	if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+		message(STATUS "DEBUG WIN")
 		# Only the Windows CMake builds (ie not Cygwin) can read the registry
 		get_filename_component(DIA_COM_DLL_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Classes\\CLSID\\{E6756135-1E65-4D17-8576-610761398C3C}\\InprocServer32]" DIRECTORY CACHE)
 	elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "CYGWIN")
+		message(STATUS "DEBUG CYGWIN")
 		# If we are on Cygwin, use regtool and cygpath (both should be provided by Cygwin)
 		find_program(CMAKE_REGTOOL regtool)
 		find_program(CMAKE_CYGPATH cygpath)
 
 		if(CMAKE_REGTOOL AND CMAKE_CYGPATH)
+			message(STATUS "DEBUG REGTOOL AND CYGPATH")
 			execute_process(
 				COMMAND "${CMAKE_REGTOOL}" get "/HKLM/SOFTWARE/Classes/CLSID/{E6756135-1E65-4D17-8576-610761398C3C}/InprocServer32/"
 				COMMAND "${CMAKE_CYGPATH}" -u -f -
