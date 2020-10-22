@@ -44,20 +44,8 @@ endif
 
 # Enable debugging symbols?
 ifeq ($(ENABLE_DDR),yes)
-  # Optimization is limited when using '-Wc,debug', but *.dbg files are required for DDR.
-  # Override compile commands to compile twice: once with '-Wc,debug', and a second time
-  # without that option.
-
-  define COMPILE_C_COMMAND
-    $(CC) $(CPPFLAGS) $(MODULE_CPPFLAGS) $(GLOBAL_CPPFLAGS) -c $(GLOBAL_CFLAGS) $(MODULE_CFLAGS) $(CFLAGS) -Wc,debug -o $@ $<
-    $(CC) $(CPPFLAGS) $(MODULE_CPPFLAGS) $(GLOBAL_CPPFLAGS) -c $(GLOBAL_CFLAGS) $(MODULE_CFLAGS) $(CFLAGS) -o $@ $<
-  endef
-
-  define COMPILE_CXX_COMMAND
-    $(CXX) $(CPPFLAGS) $(MODULE_CPPFLAGS) $(GLOBAL_CPPFLAGS) -c $(GLOBAL_CXXFLAGS) $(MODULE_CXXFLAGS) $(CXXFLAGS) -Wc,debug -o $@ $<
-    $(CXX) $(CPPFLAGS) $(MODULE_CPPFLAGS) $(GLOBAL_CPPFLAGS) -c $(GLOBAL_CXXFLAGS) $(MODULE_CXXFLAGS) $(CXXFLAGS) -o $@ $<
-  endef
-endif # ENABLE_DDR
+  GLOBAL_FLAGS += -Wc,"debug(level(1),nohook),xplink(noback)"
+endif
 
 # Enable Optimizations
 ifeq ($(OMR_OPTIMIZE),1)
