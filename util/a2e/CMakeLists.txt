@@ -35,6 +35,9 @@ target_link_libraries(j9a2e
 	PUBLIC
 		omr_base
 )
+if(OMR_OS_ZOS)
+	target_link_libraries(j9a2e PUBLIC omr_ascii)
+endif()
 
 target_include_directories(j9a2e
 	PUBLIC

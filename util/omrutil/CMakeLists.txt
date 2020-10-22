@@ -187,6 +187,7 @@ omr_add_exports(omrutil ${util_exports})
 
 # Add in the interface include dirs from omrutil_obj to omrutil
 target_include_directories(omrutil PUBLIC $<TARGET_PROPERTY:omrutil_obj,INTERFACE_INCLUDE_DIRECTORIES>)
+target_compile_options(omrutil_obj PUBLIC $<TARGET_PROPERTY:${OMR_UTIL_GLUE_TARGET},INTERFACE_COMPILE_OPTIONS>)
 
 target_link_libraries(omrutil
 	PUBLIC
