@@ -44,9 +44,7 @@ endif
 
 # Enable Debugging Symbols
 ifeq ($(ENABLE_DDR),yes)
-  GLOBAL_CFLAGS   += -Wc,debug
-  GLOBAL_CXXFLAGS += -Wc,debug
-else ifeq ($(OMR_DEBUG),1)
+  GLOBAL_FLAGS += -Wc,"debug(level(1),nohook),xplink(noback)"
 endif
 
 # Enable Optimizations
