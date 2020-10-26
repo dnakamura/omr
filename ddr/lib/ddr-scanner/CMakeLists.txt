@@ -31,7 +31,7 @@ target_link_libraries(omr_ddr_scanner
 		omr_ddr_ir
 )
 
-if(OMR_HOST_OS STREQUAL "win")
+if(OMR_OS_WINDOWS)
 	find_package(DiaSDK REQUIRED)
 
 	target_sources(omr_ddr_scanner
@@ -43,7 +43,7 @@ if(OMR_HOST_OS STREQUAL "win")
 		PUBLIC
 			DiaSDK::diasdk
 	)
-elseif(OMR_HOST_OS STREQUAL "linux")
+elseif(OMR_OS_LINUX OR OMR_OS_ZOS)
 	find_package(LibDwarf REQUIRED)
 
 	target_link_libraries(omr_ddr_scanner
@@ -53,17 +53,16 @@ elseif(OMR_HOST_OS STREQUAL "linux")
 
 	target_sources(omr_ddr_scanner
 		PRIVATE
-			dwarf/DwarfFunctions.cpp
 			dwarf/DwarfScanner.cpp
 	)
-elseif(OMR_HOST_OS STREQUAL "osx")
+elseif(OMR_OS_OSX)
 	target_sources(omr_ddr_scanner
 		PRIVATE
 			dwarf/DwarfFunctions.cpp
 			dwarf/DwarfParser.cpp
 			dwarf/DwarfScanner.cpp
 	)
-elseif(OMR_HOST_OS STREQUAL "aix")
+elseif(OMR_OS_AIX)
 	target_sources(omr_ddr_scanner
 		PRIVATE
 			dwarf/AixSymbolTableParser.cpp
