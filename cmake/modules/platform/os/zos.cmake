@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2017, 2020 IBM Corp. and others
+# Copyright (c) 2017, 2021 IBM Corp. and others
 #
 # This program and the accompanying materials are made available under
 # the terms of the Eclipse Public License 2.0 which accompanies this
@@ -32,17 +32,18 @@ list(APPEND OMR_PLATFORM_DEFINITIONS
 	-DZOS
 )
 
-list(APPEND OMR_PLATFORM_INCLUDE_DIRECTORIES
-	${CMAKE_SOURCE_DIR}/util/a2e/headers
-	/usr/lpp/cbclib/include
-	/usr/include
-)
-
 # Create helper targets for specifying ascii/ebcdic options
 add_library(omr_ascii INTERFACE)
 target_compile_definitions(omr_ascii INTERFACE -DIBM_ATOE)
-target_compile_options(omr_ascii INTERFACE "-Wc,convlit(ISO8859-1)")
+target_compile_options(omr_ascii INTERFACE "-Wc,convlit(ISO8859-1),nose")
 target_link_libraries(omr_ascii INTERFACE j9a2e)
+target_include_directories(omr_ascii INTERFACE
+	# OMR might not be included yet, so we can't reference omr_SOURCE_DIR.
+	# Note: the BUILD_INTERFACE genex is required as CMake does not like this path in install targets.
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/../../../../util/a2e/headers>
+	/usr/lpp/cbclib/include
+	/usr/include
+)
 
 add_library(omr_ebcdic INTERFACE)
 target_compile_definitions(omr_ebcdic INTERFACE -DOMR_EBCDIC)
