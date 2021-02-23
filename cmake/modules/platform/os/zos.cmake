@@ -35,7 +35,7 @@ list(APPEND OMR_PLATFORM_DEFINITIONS
 # Create helper targets for specifying ascii/ebcdic options
 add_library(omr_ascii INTERFACE)
 target_compile_definitions(omr_ascii INTERFACE -DIBM_ATOE)
-target_compile_options(omr_ascii INTERFACE "-Wc,convlit(ISO8859-1),nose")
+target_compile_options(omr_ascii INTERFACE "-Wc,convlit(ISO8859-1),nose,se(/lpp/cbclib/include,/usr/include)")
 target_link_libraries(omr_ascii INTERFACE j9a2e)
 target_include_directories(omr_ascii INTERFACE
 	# OMR might not be included yet, so we can't reference omr_SOURCE_DIR.
