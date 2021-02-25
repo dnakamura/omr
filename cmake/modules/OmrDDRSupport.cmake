@@ -59,6 +59,13 @@ function(make_ddr_set set_name)
 		return()
 	endif()
 
+	if(OMR_OS_ZOS)
+
+		set(CMD_PFX  env "LIBPATH=$<TARGET_FILE_DIR:j9a2e>:$LIBPATH")
+	else()
+		set(CMD_PFX)
+	endif()
+
 	add_custom_command(
 		OUTPUT "${DDR_CONFIG_STAMP}"
 		COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
@@ -68,12 +75,12 @@ function(make_ddr_set set_name)
 	if(CMAKE_GENERATOR MATCHES "Makefiles")
 		add_custom_target(${DDR_TARGET_NAME}
 			DEPENDS "${DDR_CONFIG_STAMP}"
-			COMMAND "$(MAKE)" -C "${DDR_BIN_DIR}"
+			COMMAND ${CMD_PFX} "$(MAKE)" -C "${DDR_BIN_DIR}"
 		)
 	else()
 		add_custom_target(${DDR_TARGET_NAME}
 			DEPENDS "${DDR_CONFIG_STAMP}"
-			COMMAND ${CMAKE_COMMAND} --build "${DDR_BIN_DIR}"
+			COMMAND ${CMD_PFX} ${CMAKE_COMMAND} --build "${DDR_BIN_DIR}"
 		)
 	endif()
 	set_property(TARGET "${DDR_TARGET_NAME}" PROPERTY DDR_BIN_DIR "${DDR_BIN_DIR}")
