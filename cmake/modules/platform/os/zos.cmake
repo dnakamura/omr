@@ -51,7 +51,6 @@ install(TARGETS omr_ascii omr_ebcdic
 
 macro(omr_os_global_setup)
 	# TODO: Move this out and after platform config.
-	enable_language(ASM-ZOS)
 
 	omr_append_flags(CMAKE_ASM_FLAGS ${OMR_PLATFORM_COMPILE_OPTIONS})
 
