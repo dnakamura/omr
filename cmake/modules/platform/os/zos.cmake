@@ -53,7 +53,7 @@ macro(omr_os_global_setup)
 	# TODO: Move this out and after platform config.
 	enable_language(ASM-ZOS)
 
-	omr_append_flags(CMAKE_ASM-ZOS_FLAGS ${OMR_PLATFORM_COMPILE_OPTIONS})
+	omr_append_flags(CMAKE_ASM_FLAGS ${OMR_PLATFORM_COMPILE_OPTIONS})
 
 	# TODO below is a chunk of the original makefile which still needs to be ported
 	# # This is the first option applied to the C++ linking command.
