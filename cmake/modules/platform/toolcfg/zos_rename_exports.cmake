@@ -37,5 +37,6 @@ set(SRC_FILE "${CMAKE_BINARY_DIR}/${base_name}.x")
 set(DEST_FILE "${LIBRARY_FOLDER}/${base_name}.x")
 
 if(NOT "${SRC_FILE}" STREQUAL "${DEST_FILE}")
+	file(COPY "${SRC_FILE}" "${J9VM_SOURCE_DIR}/lib/${base_name}.x")
 	file(RENAME "${SRC_FILE}" "${DEST_FILE}")
 endif()
