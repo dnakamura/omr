@@ -229,7 +229,7 @@ if(OMR_OS_ZOS)
 		add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
 			COMMAND "${CMAKE_COMMAND}"
 				"-DLIBRARY_FILE_NAME=$<TARGET_FILE_NAME:${TARGET_NAME}>"
-"-DJ9VM_SOURCE_DIR=${J9VM_SOURCE_DIR}"
+"-DJ9VM_SOURCE_DIR=${j9vm_SOURCE_DIR}"
 				"-DLIBRARY_FOLDER=$<TARGET_FILE_DIR:${TARGET_NAME}>"
 				-P "${omr_SOURCE_DIR}/cmake/modules/platform/toolcfg/zos_rename_exports.cmake"
 		)
