@@ -56,6 +56,10 @@ install(
 
 set_property(TARGET j9a2e PROPERTY FOLDER util)
 
+set_target_properties(j9a2e PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bogus")
 
+add_custom_target(debug_print_lib
+COMMAND echo "IMPLIB = $<TARGET_LINKER_FILE:j9a2e>"
+)
 target_enable_ddr(j9a2e)
 ddr_set_add_targets(omrddr j9a2e)
