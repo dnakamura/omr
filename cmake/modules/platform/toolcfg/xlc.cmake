@@ -220,6 +220,11 @@ if(OMR_OS_ZOS)
 			PRIVATE
 				-Wc,DLL,EXPORTALL
 		)
+		if(TARGET_NAME STREQUAL "jvm_redirect")
+			set(IS_REDIRECTOR ON)
+		else()
+			set(IS_REDIRECTOR OFF)
+		endif()
 
 		# only shared libraries will generate an export side deck
 		get_target_property(target_type ${TARGET_NAME} TYPE)
@@ -231,6 +236,7 @@ if(OMR_OS_ZOS)
 				"-DLIBRARY_FILE_NAME=$<TARGET_FILE_NAME:${TARGET_NAME}>"
 "-DJ9VM_SOURCE_DIR=${j9vm_BINARY_DIR}"
 				"-DLIBRARY_FOLDER=$<TARGET_FILE_DIR:${TARGET_NAME}>"
+				"-DIS_REDIRECTOR=${IS_REDIRECTOR}"
 				-P "${omr_SOURCE_DIR}/cmake/modules/platform/toolcfg/zos_rename_exports.cmake"
 		)
 	endfunction()
