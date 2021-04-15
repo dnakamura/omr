@@ -125,6 +125,10 @@ target_compile_definitions(j9thr_obj
 	PUBLIC
 		$<TARGET_PROPERTY:omr_base,INTERFACE_COMPILE_DEFINITIONS>
 )
+target_compile_options(j9thr_obj
+	PUBLIC
+		$<TARGET_PROPERTY:omr_base,INTERFACE_COMPILE_OPTIONS>
+)
 
 target_enable_ddr(j9thr_obj)
 ddr_add_headers(j9thr_obj
