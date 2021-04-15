@@ -147,6 +147,7 @@ function(process_source_files src_files)
 			# Adding this option to the command alleviates this issue.
 			list(APPEND pp_command "-xc++")
 		endif()
+list(APPEND pp_command "-Wc,lp64")
 		list(APPEND pp_command ${BASE_ARGS} "-E" "${stub_file}")
 		add_custom_command(
 			OUTPUT "${annt_file}"
