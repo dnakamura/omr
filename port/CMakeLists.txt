@@ -60,6 +60,14 @@ target_compile_definitions(omrport_obj
 		$<TARGET_PROPERTY:omr_base,INTERFACE_COMPILE_DEFINITIONS>
 )
 
+target_compile_OPTIONS(omrport_obj
+	PUBLIC
+		$<TARGET_PROPERTY:omr_base,INTERFACE_COMPILE_OPTIONS>
+)
+target_include_directories(omrport_obj
+	PUBLIC
+		$<TARGET_PROPERTY:omr_base,INTERFACE_INCLUDE_DIRECTORIES>
+)
 if(OMR_HOST_OS STREQUAL "aix")
 	list(APPEND OBJECTS omrgetsp.s)
 endif()
