@@ -548,6 +548,7 @@ if(OMR_MIXED_REFERENCES_MODE_STATIC)
 	target_compile_definitions(omrgc_full PUBLIC -DOMR_OVERRIDE_COMPRESS_OBJECT_REFERENCES=0)
 endif()
 
+set_source_files_properties(base/standard/CompactScheme.cpp PROPERTIES COMPILE_FLAGS "-qnodebug")
 if(OMR_GC_API)
 	add_subdirectory(api)
 endif(OMR_GC_API)
