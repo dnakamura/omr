@@ -161,7 +161,10 @@ omr_find_files(resolvedPaths
 	FILES ${OBJECTS}
 )
 
-target_sources(omrutil_obj PRIVATE ${resolvedPaths})
+target_sources(omrutil_obj PRIVATE
+	${resolvedPaths}
+	$<TARGET_PROPERTY:${OMR_UTIL_GLUE_TARGET},INTERFACE_SOURCES>
+)
 
 # This is a bit of a song and dance because CMake
 # won't let object libraries link against anything.
